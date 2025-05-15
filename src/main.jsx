@@ -38,11 +38,11 @@ if (!clientId) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={clientId}>
-      <BrowserRouter>
+      
         <Header/>
         <Toaster/>
         <RouterProvider router={router}/>
-      </BrowserRouter>
+      
     </GoogleOAuthProvider>
   </StrictMode>
 )
