@@ -5,21 +5,18 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-// import { auth, GoogleAuthProvider, signInWithCredential } from "./firebase/store; // Make sure you have firebase configured
-// import { toast } from "react-hot-toast";
 import { signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 
 const getEmailInitials = (email) => {
   if (!email) return "";
   const name = email.split("@")[0];
   const parts = name.split(/[._-]/);
-  const initials = parts
-    .map((part) => part.charAt(0).toUpperCase())
+  return parts
+    .map((p) => p.charAt(0).toUpperCase())
     .slice(0, 2)
     .join("");
-  return initials;
 };
 
 const Header = () => {
@@ -29,23 +26,23 @@ const Header = () => {
   const handleLoginSuccess = async (credentialResponse) => {
     try {
       const decodedToken = jwtDecode(credentialResponse.credential);
-      const credential = GoogleAuthProvider.credential(credentialResponse.credential);
+      const credential = GoogleAuthProvider.credential(
+        credentialResponse.credential,
+      );
       const userCredential = await signInWithCredential(auth, credential);
 
       const userData = {
         name: decodedToken.name,
         email: decodedToken.email,
         picture: decodedToken.picture,
-        uid: userCredential.user.uid
+        uid: userCredential.user.uid,
       };
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       setShowGoogleSignIn(false);
-      toast.success("Logged in successfully!");
     } catch (error) {
-      console.error("Error during Google auth:", error);
-      toast.error(`Login failed: ${error.message}`);
+      console.error(error);
     }
   };
 
@@ -57,37 +54,36 @@ const Header = () => {
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
-    if (userData) {
-      setUser(userData);
-    }
+    if (userData) setUser(userData);
   }, []);
 
   return (
-    <div className="p-2 shadow-sm flex justify-between items-center px-5 bg-white">
+    <div className="p-2 px-5 flex justify-between items-center bg-[#0f0f0f] border-b border-gray-800 shadow-md">
       {/* Logo */}
       <img src="/sarthi.png" alt="Logo" className="h-10" />
 
-      {/* Right-side controls */}
-      <div className="flex items-center gap-4 relative">
+      {/* Right Side */}
+      <div className="flex items-center gap-4 relative text-white">
         {user ? (
           <>
             <a href="/create-trip">
-              <Button variant="outline" className="rounded-full">
+              <Button className="rounded-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-700">
                 + Create Trip
               </Button>
             </a>
+
             <a href="/my-trips">
-              <Button variant="outline" className="rounded-full">
+              <Button className="rounded-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-700">
                 My Trips
               </Button>
             </a>
+
             <Popover>
               <PopoverTrigger>
-                <div className="h-10 w-10 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold cursor-pointer hover:bg-blue-700 transition-colors">
+                <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-800 text-white font-bold cursor-pointer border border-gray-700 hover:bg-gray-700 transition">
                   {user.picture ? (
-                    <img 
-                      src={user.picture} 
-                      alt={user.name} 
+                    <img
+                      src={user.picture}
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
@@ -95,23 +91,21 @@ const Header = () => {
                   )}
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-48 text-sm">
-                <div className="flex items-center gap-2 mb-2">
+
+              <PopoverContent className="w-52 bg-[#1a1a1a] text-white border border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
                   {user.picture && (
-                    <img 
-                      src={user.picture} 
-                      alt={user.name} 
-                      className="h-8 w-8 rounded-full"
-                    />
+                    <img src={user.picture} className="h-8 w-8 rounded-full" />
                   )}
                   <div>
                     <p className="font-semibold">{user.name}</p>
-                    <p className="text-gray-500 text-xs">{user.email}</p>
+                    <p className="text-gray-400 text-xs">{user.email}</p>
                   </div>
                 </div>
+
                 <Button
                   variant="ghost"
-                  className="mt-2 w-full"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
                   onClick={handleLogout}
                 >
                   Sign Out
@@ -123,29 +117,24 @@ const Header = () => {
           <>
             <Button
               onClick={() => setShowGoogleSignIn(true)}
-              className="rounded-full"
+              className="rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-md"
             >
               Sign In
             </Button>
 
             {showGoogleSignIn && (
-              <div className="absolute top-12 right-0 z-50 bg-white p-4 rounded-lg shadow-lg border">
+              <div className="absolute top-12 right-0 z-50 bg-[#1a1a1a] p-4 rounded-lg shadow-lg border border-gray-700">
                 <GoogleLogin
                   onSuccess={handleLoginSuccess}
-                  onError={() => {
-                    toast.error("Google login failed");
-                    setShowGoogleSignIn(false);
-                  }}
+                  onError={() => setShowGoogleSignIn(false)}
                   useOneTap
-                  auto_select
-                  theme="filled_blue"
-                  size="medium"
-                  text="signin_with"
+                  theme="filled_black"
                   shape="pill"
                 />
+
                 <Button
                   variant="ghost"
-                  className="w-full mt-2"
+                  className="w-full mt-2 text-white hover:bg-gray-800"
                   onClick={() => setShowGoogleSignIn(false)}
                 >
                   Cancel

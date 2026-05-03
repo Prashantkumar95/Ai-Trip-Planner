@@ -397,7 +397,7 @@ const CreateTrip = () => {
                       onError={handleLoginError}
                       useOneTap
                       auto_select
-                      theme="filled_blue"
+                      theme="filled_black"
                       size="large"
                       shape="rectangular"
                       text="continue_with"
