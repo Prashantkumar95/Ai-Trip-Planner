@@ -561,11 +561,11 @@ const ViewTrip = () => {
         </section>
 
         {/* Places To Visit */}
-        <section className="mb-12">
+        {/* <section className="mb-12">
           <div className="bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
             <PlacesToVisit tripData={tripData} />
           </div>
-        </section>
+        </section> */}
 
         {/* Hotels Section */}
         <section className="mb-12">
