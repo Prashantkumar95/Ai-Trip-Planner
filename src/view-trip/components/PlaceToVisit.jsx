@@ -431,82 +431,114 @@ function PlacesToVisit({ tripData = {} }) {
 
     default:
       return (
-        <div className="mt-8 bg-black min-h-screen text-white px-4 py-8 rounded-3xl">
-          
-          {/* Header */}
-          <div className="mb-10">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
-              Places to Visit
-            </h2>
+  <div className="mt-8 min-h-screen bg-[#070707] text-white px-4 md:px-6 py-10 rounded-[32px]">
 
-            <p className="text-gray-500 mt-2">
-              Curated premium travel experiences
-            </p>
+    {/* Premium Header */}
+    <div className="mb-12">
+      <div className="flex items-center gap-3 mb-3">
+
+        <div className="w-12 h-1 rounded-full bg-white"></div>
+
+        <span className="uppercase tracking-[0.25em] text-sm text-gray-400 font-medium">
+          Travel Itinerary
+        </span>
+      </div>
+
+      <h2 className="text-4xl md:text-5xl font-extrabold leading-tight text-white">
+        Places to Visit
+      </h2>
+
+      <p className="text-gray-300 mt-4 text-lg max-w-2xl leading-relaxed">
+        Discover carefully curated destinations, premium experiences,
+        and unforgettable attractions designed for your perfect trip.
+      </p>
+    </div>
+
+    {/* Loader */}
+    {isLoadingImages && (
+      <div className="mb-8 flex justify-center">
+        <div className="flex items-center gap-3 bg-[#121212] border border-gray-700 px-6 py-3 rounded-full shadow-xl">
+          
+          <div className="w-3 h-3 rounded-full bg-white animate-pulse"></div>
+
+          <span className="text-gray-200 text-sm font-medium">
+            Loading destination visuals...
+          </span>
+        </div>
+      </div>
+    )}
+
+    {/* Days */}
+    <div className="space-y-10">
+      {displayPlans.map((day) => (
+        <div
+          key={`day-${day.day}`}
+          className="relative bg-[#111111] border border-gray-700 rounded-[28px] p-6 md:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden"
+        >
+
+          {/* Background Accent */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none"></div>
+
+          {/* Header */}
+          <div className="flex items-center gap-5 mb-8 relative z-10">
+
+            {/* Day Circle */}
+            <div className="w-14 h-14 rounded-2xl bg-white text-black flex items-center justify-center text-xl font-bold shadow-lg">
+              {day.day}
+            </div>
+
+            {/* Day Info */}
+            <div>
+              <h3 className="text-2xl md:text-3xl font-bold text-white">
+                {day.theme || `Day ${day.day}`}
+              </h3>
+
+              <p className="text-gray-300 mt-1 text-sm md:text-base">
+                Premium curated itinerary for your journey
+              </p>
+            </div>
           </div>
 
-          {/* Loader */}
-          {isLoadingImages && (
-            <div className="mb-6 text-center">
-              <div className="inline-flex items-center gap-2 bg-[#111111] border border-gray-800 px-5 py-3 rounded-full shadow-lg">
-                <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                <span className="text-gray-300 text-sm">
-                  Loading premium visuals...
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Activities */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
 
-          {/* Day Sections */}
-          <div className="space-y-12">
-            {displayPlans.map((day) => (
-              <div
-                key={`day-${day.day}`}
-                className="relative bg-gradient-to-br from-[#111111] to-[#1a1a1a] border border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden"
-              >
-                {/* Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent pointer-events-none"></div>
-
-                {/* Day Header */}
-                <div className="flex items-center gap-4 mb-8 relative z-10">
-                  <div className="bg-white text-black font-bold rounded-full w-12 h-12 flex items-center justify-center text-lg shadow-lg">
-                    {day.day}
-                  </div>
-
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">
-                      {day.theme || `Day ${day.day}`}
-                    </h3>
-
-                    <p className="text-gray-500 text-sm">
-                      Premium curated itinerary
-                    </p>
-                  </div>
+            {day.activities.length > 0 ? (
+              day.activities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="
+                    bg-[#181818]
+                    border border-gray-700
+                    rounded-3xl
+                    overflow-hidden
+                    shadow-lg
+                    hover:shadow-[0_0_35px_rgba(255,255,255,0.08)]
+                    hover:border-gray-500
+                    hover:-translate-y-1
+                    transition-all duration-300
+                  "
+                >
+                  <PlaceCardItem place={activity} />
                 </div>
+              ))
+            ) : (
+              <div className="col-span-full bg-[#181818] border border-gray-700 rounded-2xl p-8 text-center">
 
-                {/* Activities Grid */}
-                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10">
-                  {day.activities.length > 0 ? (
-                    day.activities.map((activity) => (
-                      <div
-                        key={activity.id}
-                        className="bg-[#0d0d0d] border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-600 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] transition-all duration-300"
-                      >
-                        <PlaceCardItem place={activity} />
-                      </div>
-                    ))
-                  ) : (
-                    <div className="col-span-full p-6 bg-[#0d0d0d] border border-gray-800 rounded-2xl text-center">
-                      <p className="text-gray-500">
-                        No activities planned for this day
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <p className="text-gray-300 text-lg font-medium">
+                  No activities planned for this day
+                </p>
+
+                <p className="text-gray-500 mt-2 text-sm">
+                  Your itinerary for this day is currently empty.
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
-      );
+      ))}
+    </div>
+  </div>
+);
   }
 }
 
