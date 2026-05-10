@@ -65,7 +65,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth"; // ✅ added
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC5hvrHG779kXZMkx6KbA9i3k9OfadFWG0",
+  apiKey: "AIzaSyDJcuL8AiLGQx3S5uNA0RYqqsRGOfCg45Y",
   authDomain: "aitripplanner-dbe4a.firebaseapp.com",
   projectId: "aitripplanner-dbe4a",
   storageBucket: "aitripplanner-dbe4a.firebasestorage.app",
