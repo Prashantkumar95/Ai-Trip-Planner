@@ -211,33 +211,81 @@ const ViewTrip = () => {
 //   );
 // };
 return (
-  <div className="min-h-screen bg-black text-white">
-    
-    {/* Background Glow */}
-    <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_40%)] pointer-events-none"></div>
+  <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
 
-    <div className="container mx-auto px-4 py-8 relative z-10">
+    {/* Premium Background */}
+    <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_35%)] pointer-events-none"></div>
 
-      {/* Info Section */}
-      <div className="mb-12">
-        <InfoSection
-          trip={tripData}
-          isLoading={loading}
-        />
+    <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8 relative z-10">
+
+      {/* PAGE HEADER */}
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+          Your Luxury Trip
+        </h1>
+
+        <p className="text-gray-400 mt-3 text-lg max-w-2xl mx-auto">
+          Personalized travel itinerary with premium hotels,
+          curated experiences, and unforgettable destinations.
+        </p>
       </div>
 
-      {/* Hotels Section */}
-      <div className="mb-16">
-        <Hotels tripdata={tripData} />
-      </div>
+      {/* INFO SECTION */}
+      <section className="mb-14">
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl shadow-2xl p-6 md:p-8">
+          <InfoSection
+            trip={tripData}
+            isLoading={loading}
+          />
+        </div>
+      </section>
 
-      {/* Places To Visit Section */}
-      <div className="mb-16">
-        <PlacesToVisit tripData={tripData} />
-      </div>
+      {/* HOTELS SECTION */}
+      <section className="mb-16">
+        
+        {/* Section Title */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold text-white">
+              Recommended Hotels
+            </h2>
 
-      {/* Footer */}
-      <Footer />
+            <p className="text-gray-400 mt-1">
+              Handpicked stays for your comfort
+            </p>
+          </div>
+        </div>
+
+        {/* Section Content */}
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl shadow-2xl p-6">
+          <Hotels tripdata={tripData} />
+        </div>
+      </section>
+
+      {/* PLACES TO VISIT */}
+      <section className="mb-20">
+
+        {/* Section Title */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold text-white">
+              Places To Visit
+            </h2>
+
+            <p className="text-gray-400 mt-1">
+              Curated premium experiences for your journey
+            </p>
+          </div>
+        </div>
+
+        {/* Section Content */}
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl shadow-2xl p-6">
+          <PlacesToVisit tripData={tripData} />
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      {/* <Footer /> */}
 
     </div>
   </div>
