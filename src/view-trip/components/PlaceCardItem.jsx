@@ -367,7 +367,7 @@ function PlaceCardItem({
               mt-auto
               w-full
               bg-black
-              text-white
+              text-gray
               py-4
               rounded-2xl
               font-semibold
