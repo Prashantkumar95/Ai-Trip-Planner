@@ -1,101 +1,435 @@
-import React, { useEffect, useState, useCallback } from 'react';
+// import React, { useEffect, useState, useCallback } from 'react';
+// import { GetPlaceDetails } from '@/service/GlobalApi';
+// import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf } from 'react-icons/fa';
+
+// const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACE_API_KEY || '';
+
+// const PHOTO_REF_URL = (ref) =>
+//   GOOGLE_API_KEY
+//     ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref}&key=${GOOGLE_API_KEY}`
+//     : '/placeholder-location.jpg';
+
+// const PlaceCardItem = ({ place }) => {
+//   const [imageUrl, setImageUrl] = useState(
+//     place.placeImageURL && place.placeImageURL !== '/placeholder-location.jpg'
+//       ? place.placeImageURL
+//       : '/placeholder-location.jpg'
+//   );
+
+//   const fetchPlacePhoto = useCallback(async () => {
+//     if (imageUrl !== '/placeholder-location.jpg') return; // Already have a valid image
+
+//     try {
+//       const data = { textQuery: place.placeName };
+//       const response = await GetPlaceDetails(data);
+//       const photoRef = response?.data?.photos?.[0]?.photo_reference;
+
+//       if (photoRef) {
+//         setImageUrl(PHOTO_REF_URL(photoRef));
+//       }
+//     } catch (error) {
+//       console.error('Failed to fetch place photo:', error);
+//     }
+//   }, [place.placeName, imageUrl]);
+
+//   useEffect(() => {
+//     fetchPlacePhoto();
+//   }, [fetchPlacePhoto]);
+
+//   return (
+//     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+//       {/* Place Image */}
+//       <div className="relative h-48 overflow-hidden">
+//         <img
+//           src={imageUrl}
+//           alt={`Image of ${place.placeName || 'place'}`}
+//           className="w-full h-full object-cover"
+//           onError={(e) => {
+//             e.target.src = '/placeholder-location.jpg';
+//           }}
+//         />
+//         {/* Google Maps Link */}
+//         {place.mapsUrl && (
+//           <a
+//             href={place.mapsUrl}
+//             target="_blank"
+//             rel="noopener noreferrer"
+//             className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-blue-50 transition-colors"
+//             title="Open in Google Maps"
+//           >
+//             <FaMapMarkerAlt className="text-red-500 text-lg" />
+//           </a>
+//         )}
+//       </div>
+
+//       {/* Place Details */}
+//       <div className="p-4 flex-1 flex flex-col">
+//         <h3 className="text-xl font-bold mb-2 text-gray-800">{place.placeName}</h3>
+
+//         <div className="flex items-center mb-1">
+//           <FaClock className="text-gray-500 mr-2" />
+//           <span className="text-gray-600">
+//             <span className="font-semibold">Best time:</span> {place.bestVisitTime}
+//           </span>
+//         </div>
+
+//         <div className="flex items-center mb-1">
+//           <FaHourglassHalf className="text-gray-500 mr-2" />
+//           <span className="text-gray-600">
+//             <span className="font-semibold">Duration:</span> {place.duration}
+//           </span>
+//         </div>
+
+//         <div className="flex items-center mb-3">
+//           <FaTicketAlt className="text-gray-500 mr-2" />
+//           <span className="text-gray-600">
+//             <span className="font-semibold">Price:</span> {place.ticketPrice}
+//           </span>
+//         </div>
+
+//         {place.placeDetails && (
+//           <div className="mt-auto pt-2 border-t border-gray-100">
+//             <div className="flex items-start">
+//               <FaInfoCircle className="text-gray-500 mr-2 mt-1 flex-shrink-0" />
+//               <p className="text-gray-600 text-sm">{place.placeDetails}</p>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PlaceCardItem;
+
+
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+
 import { GetPlaceDetails } from '@/service/GlobalApi';
-import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf } from 'react-icons/fa';
 
-const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACE_API_KEY || '';
+import {
+  FaMapMarkerAlt,
+  FaClock,
+  FaTicketAlt,
+  FaArrowRight,
+} from 'react-icons/fa';
 
-const PHOTO_REF_URL = (ref) =>
+const GOOGLE_API_KEY =
+  import.meta.env
+    .VITE_GOOGLE_PLACE_API_KEY || '';
+
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop';
+
+const PHOTO_REF_URL = (
+  photoName
+) =>
   GOOGLE_API_KEY
-    ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref}&key=${GOOGLE_API_KEY}`
-    : '/placeholder-location.jpg';
+    ? `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=1000&key=${GOOGLE_API_KEY}`
+    : FALLBACK_IMAGE;
 
 const PlaceCardItem = ({ place }) => {
-  const [imageUrl, setImageUrl] = useState(
-    place.placeImageURL && place.placeImageURL !== '/placeholder-location.jpg'
-      ? place.placeImageURL
-      : '/placeholder-location.jpg'
-  );
+  const [imageUrl, setImageUrl] =
+    useState(
+      place?.placeImageURL &&
+        place.placeImageURL !==
+          '/placeholder-location.jpg'
+        ? place.placeImageURL
+        : FALLBACK_IMAGE
+    );
 
-  const fetchPlacePhoto = useCallback(async () => {
-    if (imageUrl !== '/placeholder-location.jpg') return; // Already have a valid image
+  const [isLoading, setIsLoading] =
+    useState(false);
 
-    try {
-      const data = { textQuery: place.placeName };
-      const response = await GetPlaceDetails(data);
-      const photoRef = response?.data?.photos?.[0]?.photo_reference;
-
-      if (photoRef) {
-        setImageUrl(PHOTO_REF_URL(photoRef));
+  const fetchPlacePhoto =
+    useCallback(async () => {
+      if (
+        imageUrl &&
+        imageUrl !== FALLBACK_IMAGE
+      ) {
+        return;
       }
-    } catch (error) {
-      console.error('Failed to fetch place photo:', error);
-    }
-  }, [place.placeName, imageUrl]);
+
+      if (!place?.placeName) return;
+
+      try {
+        setIsLoading(true);
+
+        const response =
+          await GetPlaceDetails({
+            textQuery:
+              place.placeName,
+          });
+
+        console.log(
+          'Place API Response:',
+          response?.data
+        );
+
+        const photo =
+          response?.data?.places?.[0]
+            ?.photos?.[0];
+
+        if (photo?.name) {
+          setImageUrl(
+            PHOTO_REF_URL(
+              photo.name
+            )
+          );
+        }
+      } catch (error) {
+        console.error(
+          'Failed to fetch place image:',
+          error
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }, [place?.placeName, imageUrl]);
 
   useEffect(() => {
     fetchPlacePhoto();
   }, [fetchPlacePhoto]);
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-      {/* Place Image */}
-      <div className="relative h-48 overflow-hidden">
+    <div
+      className="
+        group
+        relative
+        bg-white
+        rounded-[32px]
+        overflow-hidden
+        border
+        border-gray-200
+        shadow-[0_10px_40px_rgba(0,0,0,0.06)]
+        hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)]
+        hover:-translate-y-2
+        transition-all
+        duration-500
+        flex
+        flex-col
+        h-full
+      "
+    >
+      {/* IMAGE SECTION */}
+      <div className="relative h-[280px] overflow-hidden">
+
+        {/* Loader */}
+        {isLoading && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white">
+
+            <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        {/* Image */}
         <img
           src={imageUrl}
-          alt={`Image of ${place.placeName || 'place'}`}
-          className="w-full h-full object-cover"
+          alt={
+            place?.placeName ||
+            'Destination'
+          }
+          className="
+            w-full
+            h-full
+            object-cover
+            transition-transform
+            duration-700
+            group-hover:scale-110
+          "
           onError={(e) => {
-            e.target.src = '/placeholder-location.jpg';
+            e.target.src =
+              FALLBACK_IMAGE;
           }}
         />
-        {/* Google Maps Link */}
-        {place.mapsUrl && (
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+        {/* Floating Map Button */}
+        {place?.mapsUrl && (
           <a
             href={place.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-blue-50 transition-colors"
-            title="Open in Google Maps"
+            className="
+              absolute
+              top-5
+              right-5
+              w-12
+              h-12
+              rounded-2xl
+              bg-white/90
+              backdrop-blur-md
+              flex
+              items-center
+              justify-center
+              shadow-lg
+              hover:bg-black
+              hover:text-white
+              transition-all
+              duration-300
+              z-10
+            "
           >
-            <FaMapMarkerAlt className="text-red-500 text-lg" />
+            <FaMapMarkerAlt className="text-lg" />
+          </a>
+        )}
+
+        {/* Place Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+
+          <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-full mb-4 border border-white/20">
+
+            <div className="w-2 h-2 rounded-full bg-green-400"></div>
+
+            <span className="text-white text-sm font-medium">
+              Recommended Destination
+            </span>
+          </div>
+
+          <h2 className="text-3xl font-black text-white leading-tight drop-shadow-lg">
+            {place?.placeName ||
+              'Unknown Place'}
+          </h2>
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="p-6 flex flex-col flex-1">
+
+        {/* Description */}
+        <p className="text-gray-600 leading-relaxed text-[15px] mb-6 line-clamp-3">
+          {place?.placeDetails ||
+            'Explore one of the most beautiful destinations carefully curated for your unforgettable travel experience.'}
+        </p>
+
+        {/* INFO CARDS */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+
+          {/* Best Time */}
+          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+
+            <div className="flex items-center gap-3 mb-2">
+
+              <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center">
+
+                <FaClock />
+              </div>
+
+              <div>
+                <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+                  Best Time
+                </p>
+
+                <p className="text-sm font-bold text-black">
+                  {place?.bestVisitTime ||
+                    'Flexible'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Duration */}
+          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+
+            <div className="flex items-center gap-3 mb-2">
+
+              <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center">
+
+                <FaTicketAlt />
+              </div>
+
+              <div>
+                <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">
+                  Duration
+                </p>
+
+                <p className="text-sm font-bold text-black">
+                  {place?.duration ||
+                    '2-3 Hours'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Price Section */}
+        <div className="flex items-center justify-between bg-black rounded-2xl px-5 py-4 mb-6">
+
+          <div>
+            <p className="text-gray-400 text-xs uppercase tracking-wide">
+              Ticket Price
+            </p>
+
+            <h3 className="text-white text-xl font-bold">
+              {place?.ticketPrice ||
+                'Free'}
+            </h3>
+          </div>
+
+          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+
+            <FaTicketAlt className="text-white text-lg" />
+          </div>
+        </div>
+
+        {/* BUTTON */}
+        {place?.mapsUrl && (
+          <a
+            href={place.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              mt-auto
+              group/button
+              w-full
+              bg-black
+              text-white
+              py-4
+              rounded-2xl
+              font-semibold
+              flex
+              items-center
+              justify-center
+              gap-3
+              hover:bg-gray-900
+              transition-all
+              duration-300
+              shadow-lg
+            "
+          >
+            Explore Destination
+
+            <FaArrowRight
+              className="
+                transition-transform
+                duration-300
+                group-hover/button:translate-x-1
+              "
+            />
           </a>
         )}
       </div>
 
-      {/* Place Details */}
-      <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-xl font-bold mb-2 text-gray-800">{place.placeName}</h3>
-
-        <div className="flex items-center mb-1">
-          <FaClock className="text-gray-500 mr-2" />
-          <span className="text-gray-600">
-            <span className="font-semibold">Best time:</span> {place.bestVisitTime}
-          </span>
-        </div>
-
-        <div className="flex items-center mb-1">
-          <FaHourglassHalf className="text-gray-500 mr-2" />
-          <span className="text-gray-600">
-            <span className="font-semibold">Duration:</span> {place.duration}
-          </span>
-        </div>
-
-        <div className="flex items-center mb-3">
-          <FaTicketAlt className="text-gray-500 mr-2" />
-          <span className="text-gray-600">
-            <span className="font-semibold">Price:</span> {place.ticketPrice}
-          </span>
-        </div>
-
-        {place.placeDetails && (
-          <div className="mt-auto pt-2 border-t border-gray-100">
-            <div className="flex items-start">
-              <FaInfoCircle className="text-gray-500 mr-2 mt-1 flex-shrink-0" />
-              <p className="text-gray-600 text-sm">{place.placeDetails}</p>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Hover Border Glow */}
+      <div
+        className="
+          absolute
+          inset-0
+          rounded-[32px]
+          border
+          border-transparent
+          group-hover:border-black/10
+          pointer-events-none
+          transition-all
+          duration-500
+        "
+      ></div>
     </div>
   );
 };
