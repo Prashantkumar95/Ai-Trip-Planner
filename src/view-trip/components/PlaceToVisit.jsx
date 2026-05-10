@@ -598,29 +598,29 @@ function PlacesToVisit({ tripData = {} }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-700">Loading your itinerary...</p>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="bg-gray-900 p-8 rounded-lg shadow-lg text-center border border-gray-800">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-300">Loading your itinerary...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-black py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Travel Itinerary</h1>
-          <p className="text-gray-600">Explore handpicked destinations for your journey</p>
+        <div className="bg-gray-900 rounded-lg shadow-lg p-6 mb-6 border border-gray-800">
+          <h1 className="text-3xl font-bold text-white mb-2">Your Travel Itinerary</h1>
+          <p className="text-gray-400">Explore handpicked destinations for your journey</p>
         </div>
 
         {/* Itinerary Days */}
         {processedData.map((day) => (
           <div key={day.day} className="mb-8">
             {/* Day Header */}
-            <div className="bg-blue-600 rounded-t-lg p-4">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-lg p-4">
               <div className="flex items-center gap-3">
                 <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center">
                   <span className="text-blue-600 font-bold text-lg">{day.day}</span>
@@ -630,20 +630,20 @@ function PlacesToVisit({ tripData = {} }) {
             </div>
 
             {/* Activities */}
-            <div className="bg-white rounded-b-lg shadow-md overflow-hidden">
+            <div className="bg-gray-900 rounded-b-lg shadow-lg overflow-hidden border-x border-b border-gray-800">
               {day.activities.map((activity, idx) => (
-                <div key={activity.id} className={`p-6 ${idx !== day.activities.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                <div key={activity.id} className={`p-6 ${idx !== day.activities.length - 1 ? 'border-b border-gray-800' : ''}`}>
                   {/* Place Name - Clearly Visible */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  <h3 className="text-2xl font-bold text-white mb-3">
                     {activity.placeName}
                   </h3>
                   
                   {/* Time and Duration */}
                   {(activity.timeRange || activity.duration) && (
-                    <div className="flex items-center gap-4 mb-3 text-gray-700">
+                    <div className="flex items-center gap-4 mb-3 text-gray-300">
                       {activity.timeRange && (
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <span className="font-medium">{activity.timeRange}</span>
@@ -655,14 +655,14 @@ function PlacesToVisit({ tripData = {} }) {
                   
                   {/* Description */}
                   {activity.description && (
-                    <p className="text-gray-700 mb-4 leading-relaxed">
+                    <p className="text-gray-300 mb-4 leading-relaxed">
                       {activity.description}
                     </p>
                   )}
                   
                   {/* Best Time */}
                   {activity.bestVisitTime && (
-                    <div className="flex items-center gap-2 mb-4 text-green-700 bg-green-50 inline-flex px-3 py-1 rounded-full">
+                    <div className="flex items-center gap-2 mb-4 text-green-400 bg-green-950/50 inline-flex px-3 py-1 rounded-full border border-green-800">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
@@ -686,7 +686,7 @@ function PlacesToVisit({ tripData = {} }) {
                     </a>
                     
                     {activity.ticketPrice && activity.ticketPrice !== 'Free' && (
-                      <div className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
+                      <div className="inline-flex items-center px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-sm border border-gray-700">
                         💰 {activity.ticketPrice}
                       </div>
                     )}
