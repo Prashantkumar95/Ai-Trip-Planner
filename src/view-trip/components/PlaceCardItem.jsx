@@ -405,7 +405,7 @@ const PlaceCardItem = ({ place }) => {
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
               <FaInfoCircle style={{ color: '#f59e0b', marginRight: '10px', marginTop: '2px', fontSize: '13px', flexShrink: 0 }} />
               <p style={{ 
-                color: '#9ca3af', 
+                color: '#2ca3af', 
                 fontSize: '13px', 
                 lineHeight: '1.6', 
                 margin: 0,
