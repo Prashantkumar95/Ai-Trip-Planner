@@ -548,143 +548,189 @@ import React from 'react';
 import PlaceCardItem from './PlaceCardItem';
 
 function PlacesToVisit({ tripData = {} }) {
-  const [placesWithImages, setPlacesWithImages] = React.useState([]);
-  const [isLoadingImages, setIsLoadingImages] = React.useState(false);
+  const [placesWithImages, setPlacesWithImages] =
+    React.useState([]);
 
-  console.log('PlacesToVisit tripData:', tripData);
+  const [isLoadingImages, setIsLoadingImages] =
+    React.useState(false);
 
-  // Process itinerary data
-  const { dailyPlans, dataStatus } = React.useMemo(() => {
-    if (!tripData || Object.keys(tripData).length === 0) {
-      return { dailyPlans: [], dataStatus: 'no-data' };
-    }
+  console.log(
+    'PlacesToVisit tripData:',
+    tripData
+  );
 
-    try {
-      const rawPlans = tripData?.tripData?.itinerary || [];
-
-      const processedPlans = Array.isArray(rawPlans)
-        ? rawPlans
-            .filter(day => day && typeof day === 'object')
-            .map((day, index) => ({
-              day: day.day || index + 1,
-              theme: day.theme || `Day ${day.day || index + 1}`,
-              activities: normalizeActivities(
-                day.activities || []
-              ),
-              ...day
-            }))
-        : [];
-
-      return {
-        dailyPlans: processedPlans,
-        dataStatus:
-          processedPlans.length > 0
-            ? 'has-data'
-            : 'no-plans'
-      };
-    } catch (error) {
-      console.error(
-        'Data processing error:',
-        error
-      );
-
-      return {
-        dailyPlans: [],
-        dataStatus: 'error'
-      };
-    }
-  }, [tripData]);
-
-  // Fetch images
-  React.useEffect(() => {
-    if (dataStatus !== 'has-data') return;
-
-    const fetchImagesForPlaces = async () => {
-      setIsLoadingImages(true);
+  // PROCESS DATA
+  const { dailyPlans, dataStatus } =
+    React.useMemo(() => {
+      if (
+        !tripData ||
+        Object.keys(tripData).length === 0
+      ) {
+        return {
+          dailyPlans: [],
+          dataStatus: 'no-data'
+        };
+      }
 
       try {
-        const allActivities = dailyPlans.flatMap(
-          day => day.activities
-        );
+        const rawPlans =
+          tripData?.tripData?.itinerary ||
+          [];
 
-        const activitiesWithImages = await Promise.all(
-          allActivities.map(async activity => {
-            if (
-              activity.placeImageURL &&
-              activity.placeImageURL !==
-                '/placeholder-location.jpg'
-            ) {
-              return activity;
-            }
+        const processedPlans =
+          Array.isArray(rawPlans)
+            ? rawPlans
+                .filter(
+                  day =>
+                    day &&
+                    typeof day === 'object'
+                )
+                .map((day, index) => ({
+                  day:
+                    day.day ||
+                    index + 1,
 
-            try {
-              const response = await fetch(
-                `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
-                  activity.placeName
-                )}&per_page=1&client_id=YOUR_UNSPLASH_ACCESS_KEY`
-              );
+                  theme:
+                    day.theme ||
+                    `Day ${
+                      day.day ||
+                      index + 1
+                    }`,
 
-              if (!response.ok) {
-                throw new Error(
-                  'Unsplash API error'
-                );
-              }
+                  activities:
+                    normalizeActivities(
+                      day.activities ||
+                        []
+                    ),
 
-              const data =
-                await response.json();
+                  ...day
+                }))
+            : [];
 
-              const imageUrl =
-                data.results[0]?.urls
-                  ?.regular ||
-                '/placeholder-location.jpg';
+        return {
+          dailyPlans: processedPlans,
 
-              return {
-                ...activity,
-                placeImageURL: imageUrl
-              };
-            } catch (error) {
-              console.error(
-                `Failed to fetch image for ${activity.placeName}:`,
-                error
-              );
-
-              return activity;
-            }
-          })
-        );
-
-        const updatedDailyPlans =
-          dailyPlans.map(day => ({
-            ...day,
-            activities:
-              activitiesWithImages.filter(
-                act =>
-                  day.activities.some(
-                    originalAct =>
-                      originalAct.id === act.id
-                  )
-              )
-          }));
-
-        setPlacesWithImages(
-          updatedDailyPlans
-        );
+          dataStatus:
+            processedPlans.length > 0
+              ? 'has-data'
+              : 'no-plans'
+        };
       } catch (error) {
         console.error(
-          'Error fetching images:',
+          'Data processing error:',
           error
         );
 
-        setPlacesWithImages(dailyPlans);
-      } finally {
-        setIsLoadingImages(false);
+        return {
+          dailyPlans: [],
+          dataStatus: 'error'
+        };
       }
-    };
+    }, [tripData]);
+
+  // FETCH IMAGES
+  React.useEffect(() => {
+    if (dataStatus !== 'has-data')
+      return;
+
+    const fetchImagesForPlaces =
+      async () => {
+        setIsLoadingImages(true);
+
+        try {
+          const allActivities =
+            dailyPlans.flatMap(
+              day => day.activities
+            );
+
+          const activitiesWithImages =
+            await Promise.all(
+              allActivities.map(
+                async activity => {
+                  if (
+                    activity.placeImageURL &&
+                    activity.placeImageURL !==
+                      '/placeholder-location.jpg'
+                  ) {
+                    return activity;
+                  }
+
+                  try {
+                    const response =
+                      await fetch(
+                        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+                          activity.placeName
+                        )}&per_page=1&client_id=YOUR_UNSPLASH_ACCESS_KEY`
+                      );
+
+                    if (!response.ok) {
+                      throw new Error(
+                        'Unsplash API error'
+                      );
+                    }
+
+                    const data =
+                      await response.json();
+
+                    const imageUrl =
+                      data.results[0]
+                        ?.urls
+                        ?.regular ||
+                      '/placeholder-location.jpg';
+
+                    return {
+                      ...activity,
+                      placeImageURL:
+                        imageUrl
+                    };
+                  } catch (error) {
+                    console.error(
+                      `Failed to fetch image for ${activity.placeName}:`,
+                      error
+                    );
+
+                    return activity;
+                  }
+                }
+              )
+            );
+
+          const updatedDailyPlans =
+            dailyPlans.map(day => ({
+              ...day,
+
+              activities:
+                activitiesWithImages.filter(
+                  act =>
+                    day.activities.some(
+                      originalAct =>
+                        originalAct.id ===
+                        act.id
+                    )
+                )
+            }));
+
+          setPlacesWithImages(
+            updatedDailyPlans
+          );
+        } catch (error) {
+          console.error(
+            'Error fetching images:',
+            error
+          );
+
+          setPlacesWithImages(
+            dailyPlans
+          );
+        } finally {
+          setIsLoadingImages(false);
+        }
+      };
 
     fetchImagesForPlaces();
   }, [dailyPlans, dataStatus]);
 
-  // Normalize activities
+  // NORMALIZE ACTIVITIES
   function normalizeActivities(
     activities
   ) {
@@ -733,7 +779,7 @@ function PlacesToVisit({ tripData = {} }) {
     });
   }
 
-  // Generate Google Maps URL
+  // MAP URL
   function generateGoogleMapsUrl(
     activity
   ) {
@@ -744,9 +790,10 @@ function PlacesToVisit({ tripData = {} }) {
       return `https://www.google.com/maps?q=${activity.latitude},${activity.longitude}`;
     }
 
-    const query = encodeURIComponent(
-      activity.placeName
-    );
+    const query =
+      encodeURIComponent(
+        activity.placeName
+      );
 
     if (activity.address) {
       const address =
@@ -768,8 +815,8 @@ function PlacesToVisit({ tripData = {} }) {
   // NO DATA
   if (dataStatus === 'no-data') {
     return (
-      <div className="bg-white border border-gray-300 rounded-3xl p-10 text-center shadow-lg">
-        <p className="text-gray-700 text-lg">
+      <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center shadow-xl">
+        <p className="text-gray-300 text-lg">
           Trip data not loaded yet...
         </p>
       </div>
@@ -779,12 +826,12 @@ function PlacesToVisit({ tripData = {} }) {
   // NO PLANS
   if (dataStatus === 'no-plans') {
     return (
-      <div className="bg-white border border-gray-300 rounded-3xl p-10 text-center shadow-lg">
-        <h3 className="text-2xl font-bold text-black mb-3">
+      <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center shadow-xl">
+        <h3 className="text-2xl font-bold text-white mb-3">
           No Itinerary Found
         </h3>
 
-        <p className="text-gray-700">
+        <p className="text-gray-300">
           This trip doesn't have any
           planned activities yet.
         </p>
@@ -795,12 +842,12 @@ function PlacesToVisit({ tripData = {} }) {
   // ERROR
   if (dataStatus === 'error') {
     return (
-      <div className="bg-white border border-red-300 rounded-3xl p-10 text-center shadow-lg">
-        <h3 className="text-2xl font-bold text-red-600 mb-3">
+      <div className="bg-[#111111] border border-red-900 rounded-3xl p-10 text-center shadow-xl">
+        <h3 className="text-2xl font-bold text-red-400 mb-3">
           Data Error
         </h3>
 
-        <p className="text-gray-700">
+        <p className="text-gray-300">
           Couldn't process itinerary
           data.
         </p>
@@ -810,58 +857,60 @@ function PlacesToVisit({ tripData = {} }) {
 
   // MAIN UI
   return (
-    <div className="relative min-h-screen bg-white rounded-[36px] overflow-hidden px-4 md:px-8 py-10 text-black">
+    <div className="relative min-h-screen bg-[#050505] rounded-[36px] overflow-hidden px-4 md:px-8 py-10 text-white">
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.05),transparent_30%)]"></div>
+      {/* BACKGROUND EFFECTS */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_30%)]"></div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.02),transparent)]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent)]"></div>
 
-      {/* Content */}
+      {/* CONTENT */}
       <div className="relative z-10">
 
-        {/* Header */}
+        {/* HEADER */}
         <div className="mb-14">
 
           <div className="flex items-center gap-4 mb-4">
 
-            <div className="w-14 h-[3px] rounded-full bg-black"></div>
+            <div className="w-14 h-[3px] rounded-full bg-white"></div>
 
-            <span className="uppercase tracking-[0.25em] text-sm text-gray-700 font-semibold">
+            <span className="uppercase tracking-[0.25em] text-sm text-gray-400 font-semibold">
               Luxury Travel Guide
             </span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black leading-tight tracking-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
             Places To Visit
           </h2>
 
-          <p className="mt-5 text-gray-700 text-lg max-w-3xl leading-relaxed">
-            Explore handpicked attractions,
-            premium destinations, and
+          <p className="mt-5 text-gray-300 text-lg max-w-3xl leading-relaxed">
+            Explore handpicked
+            attractions, premium
+            destinations, and
             unforgettable experiences
             carefully curated for your
-            personalized travel journey.
+            personalized travel
+            journey.
           </p>
         </div>
 
-        {/* Loader */}
+        {/* LOADER */}
         {isLoadingImages && (
           <div className="flex justify-center mb-10">
 
-            <div className="flex items-center gap-3 bg-gray-100 border border-gray-300 px-6 py-3 rounded-full shadow-lg">
+            <div className="flex items-center gap-3 bg-[#111111] border border-gray-700 px-6 py-3 rounded-full shadow-lg">
 
-              <div className="w-3 h-3 bg-black rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
 
-              <span className="text-gray-800 text-sm font-medium">
-                Loading premium destination
-                visuals...
+              <span className="text-gray-200 text-sm font-medium">
+                Loading premium
+                destination visuals...
               </span>
             </div>
           </div>
         )}
 
-        {/* Day Plans */}
+        {/* DAY PLANS */}
         <div className="space-y-12">
 
           {displayPlans.map(day => (
@@ -869,50 +918,51 @@ function PlacesToVisit({ tripData = {} }) {
               key={`day-${day.day}`}
               className="
                 relative
-                bg-white
-                border border-gray-300
+                bg-[#111111]
+                border border-gray-800
                 rounded-[32px]
                 p-6 md:p-8
-                shadow-[0_10px_40px_rgba(0,0,0,0.08)]
+                shadow-[0_10px_40px_rgba(0,0,0,0.5)]
                 overflow-hidden
               "
             >
 
-              {/* Card Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-black/[0.02] via-transparent to-transparent pointer-events-none"></div>
+              {/* GLOW */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none"></div>
 
-              {/* Day Header */}
+              {/* DAY HEADER */}
               <div className="flex items-center justify-between flex-wrap gap-5 mb-10 relative z-10">
 
                 <div className="flex items-center gap-5">
 
-                  {/* Day Badge */}
-                  <div className="w-16 h-16 rounded-2xl bg-black text-white flex items-center justify-center text-2xl font-black shadow-lg">
+                  {/* DAY BADGE */}
+                  <div className="w-16 h-16 rounded-2xl bg-white text-black flex items-center justify-center text-2xl font-black shadow-lg">
                     {day.day}
                   </div>
 
-                  {/* Day Info */}
+                  {/* DAY INFO */}
                   <div>
-                    <h3 className="text-3xl font-bold text-black">
+                    <h3 className="text-3xl font-bold text-white">
                       {day.theme ||
                         `Day ${day.day}`}
                     </h3>
 
-                    <p className="text-gray-700 mt-1">
+                    <p className="text-gray-400 mt-1">
                       Curated itinerary for
-                      your premium experience
+                      your premium
+                      experience
                     </p>
                   </div>
                 </div>
 
-                {/* Activity Count */}
-                <div className="bg-gray-100 border border-gray-300 px-5 py-2 rounded-full text-sm text-gray-800 font-medium">
+                {/* ACTIVITY COUNT */}
+                <div className="bg-[#1a1a1a] border border-gray-700 px-5 py-2 rounded-full text-sm text-gray-200 font-medium">
                   {day.activities.length}{' '}
                   Activities
                 </div>
               </div>
 
-              {/* Activities Grid */}
+              {/* ACTIVITIES */}
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 relative z-10">
 
                 {day.activities.length >
@@ -920,35 +970,41 @@ function PlacesToVisit({ tripData = {} }) {
                   day.activities.map(
                     activity => (
                       <div
-                        key={activity.id}
+                        key={
+                          activity.id
+                        }
                         className="
-                          bg-white
-                          border border-gray-300
+                          bg-[#111111]
+                          border border-gray-700
                           rounded-[28px]
                           overflow-hidden
-                          shadow-md
-                          hover:border-black
-                          hover:shadow-[0_0_30px_rgba(0,0,0,0.12)]
+                          shadow-xl
+                          hover:border-white
+                          hover:shadow-[0_0_35px_rgba(255,255,255,0.08)]
                           hover:-translate-y-2
                           transition-all duration-300
                         "
                       >
                         <PlaceCardItem
-                          place={activity}
+                          place={
+                            activity
+                          }
                         />
                       </div>
                     )
                   )
                 ) : (
-                  <div className="col-span-full bg-gray-100 border border-gray-300 rounded-3xl p-10 text-center">
+                  <div className="col-span-full bg-[#181818] border border-gray-700 rounded-3xl p-10 text-center">
 
-                    <h4 className="text-xl font-semibold text-black mb-2">
-                      No Activities Planned
+                    <h4 className="text-xl font-semibold text-white mb-2">
+                      No Activities
+                      Planned
                     </h4>
 
-                    <p className="text-gray-700">
-                      Your itinerary for this
-                      day is currently empty.
+                    <p className="text-gray-400">
+                      Your itinerary for
+                      this day is
+                      currently empty.
                     </p>
                   </div>
                 )}
