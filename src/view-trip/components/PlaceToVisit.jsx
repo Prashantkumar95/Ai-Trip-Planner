@@ -545,14 +545,13 @@
 // export default PlacesToVisit;
 
 import React from 'react';
+import PlaceCardItem from './PlaceCardItem';
 
 function PlacesToVisit({ tripData = {} }) {
   const [processedData, setProcessedData] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    console.log('Trip Data:', tripData);
-    
     // Extract itinerary from data structure
     let itinerary = [];
     
@@ -580,7 +579,7 @@ function PlacesToVisit({ tripData = {} }) {
         timeRange: activity.timeRange || activity.time || '',
         duration: activity.duration || '',
         bestVisitTime: activity.bestVisitTime || activity.bestTime || '',
-        description: activity.placeDetails || activity.description || '',
+        placeDetails: activity.placeDetails || activity.description || '',
         ticketPrice: activity.ticketPrice || 'Free',
         mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.placeName || '')}`
       }));
@@ -599,9 +598,20 @@ function PlacesToVisit({ tripData = {} }) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="bg-gray-900 p-8 rounded-lg shadow-lg text-center border border-gray-800">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4"></div>
+        <div className="bg-gray-900 p-8 rounded-lg text-center border border-gray-800">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-300">Loading your itinerary...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (processedData.length === 0) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="bg-gray-900 p-8 rounded-lg text-center border border-gray-800 max-w-md">
+          <p className="text-gray-400 mb-2">No itinerary data found</p>
+          <p className="text-gray-500 text-sm">Please check your trip data</p>
         </div>
       </div>
     );
@@ -609,93 +619,58 @@ function PlacesToVisit({ tripData = {} }) {
 
   return (
     <div className="min-h-screen bg-black py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
+        
         {/* Header */}
-        <div className="bg-gray-900 rounded-lg shadow-lg p-6 mb-6 border border-gray-800">
-          <h1 className="text-3xl font-bold text-white mb-2">Your Travel Itinerary</h1>
-          <p className="text-gray-400">Explore handpicked destinations for your journey</p>
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Places To Visit
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Explore handpicked attractions and unforgettable experiences 
+            carefully curated for your personalized travel journey.
+          </p>
         </div>
 
-        {/* Itinerary Days */}
-        {processedData.map((day) => (
-          <div key={day.day} className="mb-8">
-            {/* Day Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-lg p-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center">
-                  <span className="text-blue-600 font-bold text-lg">{day.day}</span>
-                </div>
-                <h2 className="text-white text-2xl font-bold">{day.theme}</h2>
-              </div>
-            </div>
-
-            {/* Activities */}
-            <div className="bg-gray-900 rounded-b-lg shadow-lg overflow-hidden border-x border-b border-gray-800">
-              {day.activities.map((activity, idx) => (
-                <div key={activity.id} className={`p-6 ${idx !== day.activities.length - 1 ? 'border-b border-gray-800' : ''}`}>
-                  {/* Place Name - Clearly Visible */}
-                  <h3 className="text-2xl font-bold text-black mb-3">
-                    {activity.placeName}
-                  </h3>
-                  
-                  {/* Time and Duration */}
-                  {(activity.timeRange || activity.duration) && (
-                    <div className="flex items-center gap-4 mb-3 text-gray-300">
-                      {activity.timeRange && (
-                        <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="font-medium">{activity.timeRange}</span>
-                          {activity.duration && <span className="text-gray-500">• {activity.duration}</span>}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Description */}
-                  {activity.description && (
-                    <p className="text-black-300 mb-4 leading-relaxed">
-                      {activity.description}
+        {/* Days */}
+        <div className="space-y-8">
+          {processedData.map((day) => (
+            <div key={day.day} className="mb-8">
+              
+              {/* Day Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-2xl p-5">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg">
+                    <span className="text-blue-600 font-bold text-xl">{day.day}</span>
+                  </div>
+                  <div>
+                    <h2 className="text-white text-2xl md:text-3xl font-bold">
+                      {day.theme}
+                    </h2>
+                    <p className="text-blue-200 text-sm mt-1">
+                      Curated itinerary for your premium experience
                     </p>
-                  )}
-                  
-                  {/* Best Time */}
-                  {activity.bestVisitTime && (
-                    <div className="flex items-center gap-2 mb-4 text-green-400 bg-green-950/50 inline-flex px-3 py-1 rounded-full border border-green-800">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                      </svg>
-                      <span className="text-sm font-medium">{activity.bestVisitTime}</span>
-                    </div>
-                  )}
-                  
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 mt-4">
-                    <a
-                      href={activity.mapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      View on Map
-                    </a>
-                    
-                    {activity.ticketPrice && activity.ticketPrice !== 'Free' && (
-                      <div className="inline-flex items-center px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-sm border border-gray-700">
-                        💰 {activity.ticketPrice}
-                      </div>
-                    )}
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Activities Grid */}
+              <div className="bg-gray-900 rounded-b-2xl p-6 border-x border-b border-gray-800">
+                {day.activities.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {day.activities.map((activity) => (
+                      <PlaceCardItem key={activity.id} place={activity} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400">No activities planned for this day</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
