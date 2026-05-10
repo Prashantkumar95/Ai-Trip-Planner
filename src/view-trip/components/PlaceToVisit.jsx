@@ -246,6 +246,131 @@
 // export default PlacesToVisit;
 
 
+// import React from 'react';
+// import PlaceCardItem from './PlaceCardItem';
+
+// function PlacesToVisit({ tripData = {} }) {
+//   const [processedData, setProcessedData] = React.useState([]);
+//   const [isLoading, setIsLoading] = React.useState(true);
+
+//   React.useEffect(() => {
+//     console.log('TripData received:', tripData);
+    
+//     let itinerary = [];
+    
+//     if (tripData?.itinerary && Array.isArray(tripData.itinerary)) {
+//       itinerary = tripData.itinerary;
+//     } else if (tripData?.tripData?.itinerary && Array.isArray(tripData.tripData.itinerary)) {
+//       itinerary = tripData.tripData.itinerary;
+//     } else if (Array.isArray(tripData)) {
+//       itinerary = tripData;
+//     }
+    
+//     const days = itinerary.map((day, dayIndex) => {
+//       let activities = day.activities || day.places || [];
+      
+//       const processedActivities = activities.map((activity, actIndex) => ({
+//         id: `act-${dayIndex}-${actIndex}`,
+//         placeName: activity.placeName || activity.name || `Activity ${actIndex + 1}`,
+//         duration: activity.duration || '',
+//         bestVisitTime: activity.bestVisitTime || activity.bestTime || '',
+//         placeDetails: activity.placeDetails || activity.description || '',
+//         ticketPrice: activity.ticketPrice || 'Free',
+//         mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.placeName || '')}`
+//       }));
+      
+//       return {
+//         day: day.day || dayIndex + 1,
+//         theme: day.theme || `Day ${day.day || dayIndex + 1}`,
+//         activities: processedActivities
+//       };
+//     });
+    
+//     setProcessedData(days);
+//     setIsLoading(false);
+//   }, [tripData]);
+
+//   if (isLoading) {
+//     return (
+//       <div style={{ minHeight: '100vh', backgroundColor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+//         <div style={{ backgroundColor: '#1a1a1a', padding: '32px', borderRadius: '12px', textAlign: 'center' }}>
+//           <div style={{ color: '#fff' }}>Loading...</div>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div style={{ minHeight: '100vh', backgroundColor: '#000', padding: '32px 16px' }}>
+//       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        
+//         {/* Header */}
+//         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+//           <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#fff', marginBottom: '16px' }}>
+//             Places To Visit
+//           </h1>
+//           <p style={{ color: '#9ca3af', fontSize: '18px', maxWidth: '600px', margin: '0 auto' }}>
+//             Explore handpicked attractions for your journey
+//           </p>
+//         </div>
+
+//         {/* Itinerary */}
+//         {processedData.map((day) => (
+//           <div key={day.day} style={{ marginBottom: '32px' }}>
+            
+//             {/* Day Header */}
+//             <div style={{ 
+//               background: 'linear-gradient(135deg, #2563eb, #1e40af)', 
+//               padding: '20px', 
+//               borderRadius: '12px 12px 0 0',
+//               borderBottom: '1px solid #333'
+//             }}>
+//               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+//                 <div style={{ 
+//                   backgroundColor: '#fff', 
+//                   borderRadius: '50%', 
+//                   width: '48px', 
+//                   height: '48px', 
+//                   display: 'flex', 
+//                   alignItems: 'center', 
+//                   justifyContent: 'center'
+//                 }}>
+//                   <span style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '20px' }}>{day.day}</span>
+//                 </div>
+//                 <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{day.theme}</h2>
+//               </div>
+//             </div>
+
+//             {/* Activities Grid */}
+//             <div style={{ 
+//               backgroundColor: '#111', 
+//               padding: '24px', 
+//               borderRadius: '0 0 12px 12px',
+//               borderLeft: '1px solid #333',
+//               borderRight: '1px solid #333',
+//               borderBottom: '1px solid #333'
+//             }}>
+//               <div style={{ 
+//                 display: 'grid', 
+//                 gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
+//                 gap: '24px' 
+//               }}>
+//                 {day.activities.map((activity) => (
+//                   <PlaceCardItem key={activity.id} place={activity} />
+//                 ))}
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default PlacesToVisit;
+
+
+
 import React from 'react';
 import PlaceCardItem from './PlaceCardItem';
 
@@ -254,8 +379,9 @@ function PlacesToVisit({ tripData = {} }) {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    console.log('TripData received:', tripData);
+    console.log('Trip Data:', tripData);
     
+    // Extract itinerary from data structure
     let itinerary = [];
     
     if (tripData?.itinerary && Array.isArray(tripData.itinerary)) {
@@ -266,12 +392,14 @@ function PlacesToVisit({ tripData = {} }) {
       itinerary = tripData;
     }
     
+    // Process each day
     const days = itinerary.map((day, dayIndex) => {
-      let activities = day.activities || day.places || [];
+      let activities = day.activities || day.plan || day.places || [];
       
       const processedActivities = activities.map((activity, actIndex) => ({
         id: `act-${dayIndex}-${actIndex}`,
         placeName: activity.placeName || activity.name || `Activity ${actIndex + 1}`,
+        timeRange: activity.timeRange || activity.time || '',
         duration: activity.duration || '',
         bestVisitTime: activity.bestVisitTime || activity.bestTime || '',
         placeDetails: activity.placeDetails || activity.description || '',
@@ -292,76 +420,64 @@ function PlacesToVisit({ tripData = {} }) {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ backgroundColor: '#1a1a1a', padding: '32px', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ color: '#fff' }}>Loading...</div>
-        </div>
+      <div className="bg-black py-20 text-center">
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+        <p className="text-gray-400">Loading your itinerary...</p>
+      </div>
+    );
+  }
+
+  if (processedData.length === 0) {
+    return (
+      <div className="bg-black py-20 text-center">
+        <p className="text-gray-500">No itinerary data available</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000', padding: '32px 16px' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="bg-black py-8">
+      <div className="max-w-7xl mx-auto px-4">
         
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#fff', marginBottom: '16px' }}>
-            Places To Visit
-          </h1>
-          <p style={{ color: '#9ca3af', fontSize: '18px', maxWidth: '600px', margin: '0 auto' }}>
-            Explore handpicked attractions for your journey
-          </p>
-        </div>
-
-        {/* Itinerary */}
-        {processedData.map((day) => (
-          <div key={day.day} style={{ marginBottom: '32px' }}>
-            
-            {/* Day Header */}
-            <div style={{ 
-              background: 'linear-gradient(135deg, #2563eb, #1e40af)', 
-              padding: '20px', 
-              borderRadius: '12px 12px 0 0',
-              borderBottom: '1px solid #333'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ 
-                  backgroundColor: '#fff', 
-                  borderRadius: '50%', 
-                  width: '48px', 
-                  height: '48px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center'
-                }}>
-                  <span style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '20px' }}>{day.day}</span>
+        {/* Days */}
+        <div className="space-y-8">
+          {processedData.map((day) => (
+            <div key={day.day} className="relative">
+              
+              {/* Day Header - Dark with Blue Accent */}
+              <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-t-2xl p-5 border-b border-gray-800">
+                <div className="flex items-center gap-4">
+                  <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl w-14 h-14 flex items-center justify-center shadow-xl">
+                    <span className="text-white font-bold text-2xl">{day.day}</span>
+                  </div>
+                  <div>
+                    <h2 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
+                      {day.theme}
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                      {day.activities.length} {day.activities.length === 1 ? 'Experience' : 'Experiences'}
+                    </p>
+                  </div>
                 </div>
-                <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{day.theme}</h2>
               </div>
-            </div>
 
-            {/* Activities Grid */}
-            <div style={{ 
-              backgroundColor: '#111', 
-              padding: '24px', 
-              borderRadius: '0 0 12px 12px',
-              borderLeft: '1px solid #333',
-              borderRight: '1px solid #333',
-              borderBottom: '1px solid #333'
-            }}>
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
-                gap: '24px' 
-              }}>
-                {day.activities.map((activity) => (
-                  <PlaceCardItem key={activity.id} place={activity} />
-                ))}
+              {/* Activities Grid */}
+              <div className="bg-black rounded-b-2xl p-6 border-x border-b border-gray-800">
+                {day.activities.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {day.activities.map((activity) => (
+                      <PlaceCardItem key={activity.id} place={activity} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-16">
+                    <p className="text-gray-600">No activities planned for this day</p>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

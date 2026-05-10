@@ -270,6 +270,172 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { toast } from "sonner";
+// import { db } from "@/service/firebaseConfig";
+// import { doc, getDoc } from "firebase/firestore";
+// import InfoSection from "../components/InfoSection";
+// import Hotels from "../components/Hotels";
+// import PlacesToVisit from "../components/PlaceToVisit";
+// import Footer from "../components/Footer";
+
+// const ViewTrip = () => {
+//   const { tripId } = useParams();
+//   const [tripData, setTripData] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const getTripData = async () => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+//         const docRef = doc(db, "AITrips", tripId);
+//         const docSnap = await getDoc(docRef);
+
+//         if (!docSnap.exists()) {
+//           throw new Error("Trip not found");
+//         }
+
+//         const data = docSnap.data();
+//         console.log("Fetched trip data:", data);
+
+//         // Transform data to match both components' needs
+//         const transformedData = {
+//           destination:
+//             data.userSelection?.destination?.label ||
+//             "Destination not specified",
+//           duration: data.userSelection?.noOfDays || "Duration not specified",
+//           budget: data.userSelection?.budget?.title || "Budget not specified",
+//           travelers:
+//             data.userSelection?.travelGroup?.people ||
+//             "Travelers not specified",
+//           groupType:
+//             data.userSelection?.travelGroup?.title ||
+//             "Group type not specified",
+//           imageUrl:
+//             data.tripData?.itinerary?.[0]?.plan?.[0]?.placeImageUrl ||
+//             "/placeholder.png",
+//           // Prepare hotel data
+//           hotels:
+//             data.tripData?.hotels?.map((hotel) => ({
+//               hotelName: hotel.hotelName,
+//               hotelImageURL: hotel.hotelImageUrl || "/hotel-placeholder.jpg",
+//               rating: hotel.rating,
+//               price: hotel.price,
+//               description: hotel.description,
+//               hotelAddress: hotel.hotelAddress,
+//               notes: hotel.notes,
+//               geoCoordinates: hotel.geoCoordinates,
+//             })) || [],
+//           itinerary: data.tripData?.itinerary || [],
+//           rawData: data,
+//           // For Hotels component
+//           tripData: {
+//             hotelOptions: data.tripData?.hotels || [],
+//             itinerary: data.tripData?.itinerary || [],
+//           },
+//         };
+
+//         setTripData(transformedData);
+//       } catch (err) {
+//         console.error("Error fetching trip:", err);
+//         setError(err.message);
+//         toast.error(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (tripId) getTripData();
+//   }, [tripId]);
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-black flex items-center justify-center">
+//         <div className="text-center">
+//           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+//           <p className="text-white text-lg">Loading your luxury trip...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="min-h-screen bg-black flex items-center justify-center p-4">
+//         <div className="text-center max-w-md">
+//           <div className="text-red-500 text-6xl mb-4">⚠️</div>
+//           <h2 className="text-2xl font-bold text-white mb-2">Error Loading Trip</h2>
+//           <p className="text-gray-400">{error}</p>
+//           <button 
+//             onClick={() => window.location.reload()}
+//             className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+//           >
+//             Try Again
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-black overflow-x-hidden">
+//       {/* Premium Background Effects */}
+//       <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-black pointer-events-none"></div>
+//       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none"></div>
+
+//       <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 py-8">
+        
+//         {/* PAGE HEADER - ALL TEXT VISIBLE */}
+//         <div className="mb-12 text-center">
+//           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-3">
+//             Your Luxury Trip
+//           </h1>
+//           <div className="w-24 h-1 bg-blue-600 mx-auto mb-4 rounded-full"></div>
+//           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+//             Personalized travel itinerary with premium hotels, curated
+//             experiences, and unforgettable destinations.
+//           </p>
+//         </div>
+
+//         {/* INFO SECTION */}
+//         <section className="mb-14">
+//           <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+//             <InfoSection trip={tripData} isLoading={loading} />
+//           </div>
+//         </section>
+
+        
+
+//         {/* HOTELS SECTION */}
+//         <section className="mb-16">
+//           <div className="mb-6">
+//             <h2 className="text-3xl font-bold text-white mb-2">
+//               Recommended Hotels
+//             </h2>
+//             <p className="text-gray-400">
+//               Handpicked stays for your comfort and luxury
+//             </p>
+//           </div>
+//           <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+//             <Hotels tripdata={tripData} />
+//           </div>
+//         </section>
+
+//         {/* FOOTER */}
+//         <Footer />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ViewTrip;
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -301,37 +467,25 @@ const ViewTrip = () => {
         const data = docSnap.data();
         console.log("Fetched trip data:", data);
 
-        // Transform data to match both components' needs
         const transformedData = {
-          destination:
-            data.userSelection?.destination?.label ||
-            "Destination not specified",
+          destination: data.userSelection?.destination?.label || "Destination not specified",
           duration: data.userSelection?.noOfDays || "Duration not specified",
           budget: data.userSelection?.budget?.title || "Budget not specified",
-          travelers:
-            data.userSelection?.travelGroup?.people ||
-            "Travelers not specified",
-          groupType:
-            data.userSelection?.travelGroup?.title ||
-            "Group type not specified",
-          imageUrl:
-            data.tripData?.itinerary?.[0]?.plan?.[0]?.placeImageUrl ||
-            "/placeholder.png",
-          // Prepare hotel data
-          hotels:
-            data.tripData?.hotels?.map((hotel) => ({
-              hotelName: hotel.hotelName,
-              hotelImageURL: hotel.hotelImageUrl || "/hotel-placeholder.jpg",
-              rating: hotel.rating,
-              price: hotel.price,
-              description: hotel.description,
-              hotelAddress: hotel.hotelAddress,
-              notes: hotel.notes,
-              geoCoordinates: hotel.geoCoordinates,
-            })) || [],
+          travelers: data.userSelection?.travelGroup?.people || "Travelers not specified",
+          groupType: data.userSelection?.travelGroup?.title || "Group type not specified",
+          imageUrl: data.tripData?.itinerary?.[0]?.plan?.[0]?.placeImageUrl || "/placeholder.png",
+          hotels: data.tripData?.hotels?.map((hotel) => ({
+            hotelName: hotel.hotelName,
+            hotelImageURL: hotel.hotelImageUrl || "/hotel-placeholder.jpg",
+            rating: hotel.rating,
+            price: hotel.price,
+            description: hotel.description,
+            hotelAddress: hotel.hotelAddress,
+            notes: hotel.notes,
+            geoCoordinates: hotel.geoCoordinates,
+          })) || [],
           itinerary: data.tripData?.itinerary || [],
           rawData: data,
-          // For Hotels component
           tripData: {
             hotelOptions: data.tripData?.hotels || [],
             itinerary: data.tripData?.itinerary || [],
@@ -356,7 +510,7 @@ const ViewTrip = () => {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-white text-lg">Loading your luxury trip...</p>
+          <p className="text-gray-400">Loading your luxury trip...</p>
         </div>
       </div>
     );
@@ -366,12 +520,12 @@ const ViewTrip = () => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-white mb-2">Error Loading Trip</h2>
           <p className="text-gray-400">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="mt-6 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Try Again
           </button>
@@ -382,49 +536,45 @@ const ViewTrip = () => {
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
-      {/* Premium Background Effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-black pointer-events-none"></div>
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none"></div>
+      {/* Ultra-Dark Background Effects */}
+      <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-950 to-black pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.08),transparent_60%)] pointer-events-none"></div>
 
       <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 py-8">
         
-        {/* PAGE HEADER - ALL TEXT VISIBLE */}
+        {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-3">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-4">
             Your Luxury Trip
           </h1>
-          <div className="w-24 h-1 bg-blue-600 mx-auto mb-4 rounded-full"></div>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Personalized travel itinerary with premium hotels, curated
-            experiences, and unforgettable destinations.
+          <div className="w-20 h-1 bg-blue-600 mx-auto mb-5 rounded-full"></div>
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+            Personalized travel itinerary with premium hotels, curated experiences, and unforgettable destinations.
           </p>
         </div>
 
-        {/* INFO SECTION */}
-        <section className="mb-14">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Info Section */}
+        <section className="mb-12">
+          <div className="bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
             <InfoSection trip={tripData} isLoading={loading} />
           </div>
         </section>
 
-        
-
-        {/* HOTELS SECTION */}
-        <section className="mb-16">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white mb-2">
-              Recommended Hotels
-            </h2>
-            <p className="text-gray-400">
-              Handpicked stays for your comfort and luxury
-            </p>
+        {/* Places To Visit */}
+        <section className="mb-12">
+          <div className="bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+            <PlacesToVisit tripData={tripData} />
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        </section>
+
+        {/* Hotels Section */}
+        <section className="mb-12">
+          <div className="bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
             <Hotels tripdata={tripData} />
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* Footer */}
         <Footer />
       </div>
     </div>
