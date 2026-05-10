@@ -553,6 +553,7 @@ function PlacesToVisit({ tripData = {} }) {
 
   console.log('PlacesToVisit tripData:', tripData);
 
+  // Process itinerary data
   const { dailyPlans, dataStatus } = React.useMemo(() => {
     if (!tripData || Object.keys(tripData).length === 0) {
       return { dailyPlans: [], dataStatus: 'no-data' };
@@ -567,7 +568,9 @@ function PlacesToVisit({ tripData = {} }) {
             .map((day, index) => ({
               day: day.day || index + 1,
               theme: day.theme || `Day ${day.day || index + 1}`,
-              activities: normalizeActivities(day.activities || []),
+              activities: normalizeActivities(
+                day.activities || []
+              ),
               ...day
             }))
         : [];
@@ -580,7 +583,10 @@ function PlacesToVisit({ tripData = {} }) {
             : 'no-plans'
       };
     } catch (error) {
-      console.error('Data processing error:', error);
+      console.error(
+        'Data processing error:',
+        error
+      );
 
       return {
         dailyPlans: [],
@@ -589,6 +595,7 @@ function PlacesToVisit({ tripData = {} }) {
     }
   }, [tripData]);
 
+  // Fetch images
   React.useEffect(() => {
     if (dataStatus !== 'has-data') return;
 
@@ -617,13 +624,18 @@ function PlacesToVisit({ tripData = {} }) {
                 )}&per_page=1&client_id=YOUR_UNSPLASH_ACCESS_KEY`
               );
 
-              if (!response.ok)
-                throw new Error('Unsplash API error');
+              if (!response.ok) {
+                throw new Error(
+                  'Unsplash API error'
+                );
+              }
 
-              const data = await response.json();
+              const data =
+                await response.json();
 
               const imageUrl =
-                data.results[0]?.urls?.regular ||
+                data.results[0]?.urls
+                  ?.regular ||
                 '/placeholder-location.jpg';
 
               return {
@@ -641,16 +653,22 @@ function PlacesToVisit({ tripData = {} }) {
           })
         );
 
-        const updatedDailyPlans = dailyPlans.map(day => ({
-          ...day,
-          activities: activitiesWithImages.filter(act =>
-            day.activities.some(
-              originalAct => originalAct.id === act.id
-            )
-          )
-        }));
+        const updatedDailyPlans =
+          dailyPlans.map(day => ({
+            ...day,
+            activities:
+              activitiesWithImages.filter(
+                act =>
+                  day.activities.some(
+                    originalAct =>
+                      originalAct.id === act.id
+                  )
+              )
+          }));
 
-        setPlacesWithImages(updatedDailyPlans);
+        setPlacesWithImages(
+          updatedDailyPlans
+        );
       } catch (error) {
         console.error(
           'Error fetching images:',
@@ -666,11 +684,16 @@ function PlacesToVisit({ tripData = {} }) {
     fetchImagesForPlaces();
   }, [dailyPlans, dataStatus]);
 
-  function normalizeActivities(activities) {
-    if (!Array.isArray(activities)) return [];
+  // Normalize activities
+  function normalizeActivities(
+    activities
+  ) {
+    if (!Array.isArray(activities))
+      return [];
 
     return activities.map(act => {
-      const mapsUrl = generateGoogleMapsUrl(act);
+      const mapsUrl =
+        generateGoogleMapsUrl(act);
 
       return {
         id:
@@ -692,13 +715,16 @@ function PlacesToVisit({ tripData = {} }) {
           act.placeDetails || '',
 
         bestVisitTime:
-          act.bestVisitTime || 'Flexible',
+          act.bestVisitTime ||
+          'Flexible',
 
         duration:
-          act.duration || '1-2 hours',
+          act.duration ||
+          '1-2 hours',
 
         ticketPrice:
-          act.ticketPrice || 'Free',
+          act.ticketPrice ||
+          'Free',
 
         mapsUrl,
 
@@ -707,7 +733,10 @@ function PlacesToVisit({ tripData = {} }) {
     });
   }
 
-  function generateGoogleMapsUrl(activity) {
+  // Generate Google Maps URL
+  function generateGoogleMapsUrl(
+    activity
+  ) {
     if (
       activity.latitude &&
       activity.longitude
@@ -720,9 +749,10 @@ function PlacesToVisit({ tripData = {} }) {
     );
 
     if (activity.address) {
-      const address = encodeURIComponent(
-        activity.address
-      );
+      const address =
+        encodeURIComponent(
+          activity.address
+        );
 
       return `https://www.google.com/maps/search/?api=1&query=${address}`;
     }
@@ -735,187 +765,200 @@ function PlacesToVisit({ tripData = {} }) {
       ? placesWithImages
       : dailyPlans;
 
-  switch (dataStatus) {
-    case 'no-data':
-      return (
-        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center shadow-2xl">
-          <p className="text-gray-300 text-lg">
-            Trip data not loaded yet...
+  // NO DATA
+  if (dataStatus === 'no-data') {
+    return (
+      <div className="bg-white border border-gray-300 rounded-3xl p-10 text-center shadow-lg">
+        <p className="text-gray-700 text-lg">
+          Trip data not loaded yet...
+        </p>
+      </div>
+    );
+  }
+
+  // NO PLANS
+  if (dataStatus === 'no-plans') {
+    return (
+      <div className="bg-white border border-gray-300 rounded-3xl p-10 text-center shadow-lg">
+        <h3 className="text-2xl font-bold text-black mb-3">
+          No Itinerary Found
+        </h3>
+
+        <p className="text-gray-700">
+          This trip doesn't have any
+          planned activities yet.
+        </p>
+      </div>
+    );
+  }
+
+  // ERROR
+  if (dataStatus === 'error') {
+    return (
+      <div className="bg-white border border-red-300 rounded-3xl p-10 text-center shadow-lg">
+        <h3 className="text-2xl font-bold text-red-600 mb-3">
+          Data Error
+        </h3>
+
+        <p className="text-gray-700">
+          Couldn't process itinerary
+          data.
+        </p>
+      </div>
+    );
+  }
+
+  // MAIN UI
+  return (
+    <div className="relative min-h-screen bg-white rounded-[36px] overflow-hidden px-4 md:px-8 py-10 text-black">
+
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.05),transparent_30%)]"></div>
+
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.02),transparent)]"></div>
+
+      {/* Content */}
+      <div className="relative z-10">
+
+        {/* Header */}
+        <div className="mb-14">
+
+          <div className="flex items-center gap-4 mb-4">
+
+            <div className="w-14 h-[3px] rounded-full bg-black"></div>
+
+            <span className="uppercase tracking-[0.25em] text-sm text-gray-700 font-semibold">
+              Luxury Travel Guide
+            </span>
+          </div>
+
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black leading-tight tracking-tight">
+            Places To Visit
+          </h2>
+
+          <p className="mt-5 text-gray-700 text-lg max-w-3xl leading-relaxed">
+            Explore handpicked attractions,
+            premium destinations, and
+            unforgettable experiences
+            carefully curated for your
+            personalized travel journey.
           </p>
         </div>
-      );
 
-    case 'no-plans':
-      return (
-        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center shadow-2xl">
-          <h3 className="text-2xl font-bold text-white mb-3">
-            No Itinerary Found
-          </h3>
+        {/* Loader */}
+        {isLoadingImages && (
+          <div className="flex justify-center mb-10">
 
-          <p className="text-gray-400">
-            This trip doesn't have any planned
-            activities yet.
-          </p>
-        </div>
-      );
+            <div className="flex items-center gap-3 bg-gray-100 border border-gray-300 px-6 py-3 rounded-full shadow-lg">
 
-    case 'error':
-      return (
-        <div className="bg-[#111111] border border-red-900 rounded-3xl p-10 text-center shadow-2xl">
-          <h3 className="text-2xl font-bold text-red-400 mb-3">
-            Data Error
-          </h3>
+              <div className="w-3 h-3 bg-black rounded-full animate-pulse"></div>
 
-          <p className="text-gray-400">
-            Couldn't process itinerary data.
-          </p>
-        </div>
-      );
-
-    default:
-      return (
-        <div className="relative min-h-screen bg-[#050505] rounded-[36px] overflow-hidden px-4 md:px-8 py-10 text-white">
-
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_30%)]"></div>
-
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent)]"></div>
-
-          {/* Content */}
-          <div className="relative z-10">
-
-            {/* Header */}
-            <div className="mb-14">
-
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-[3px] rounded-full bg-white"></div>
-
-                <span className="uppercase tracking-[0.25em] text-sm text-gray-400 font-semibold">
-                  Luxury Travel Guide
-                </span>
-              </div>
-
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
-                Places To Visit
-              </h2>
-
-              <p className="mt-5 text-gray-300 text-lg max-w-3xl leading-relaxed">
-                Explore handpicked attractions,
-                premium destinations, and unforgettable
-                experiences carefully curated for your
-                personalized travel journey.
-              </p>
-            </div>
-
-            {/* Loader */}
-            {isLoadingImages && (
-              <div className="flex justify-center mb-10">
-                <div className="flex items-center gap-3 bg-[#111111] border border-gray-700 px-6 py-3 rounded-full shadow-xl">
-
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-
-                  <span className="text-gray-200 text-sm font-medium">
-                    Loading premium destination visuals...
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Day Plans */}
-            <div className="space-y-12">
-              {displayPlans.map(day => (
-                <div
-                  key={`day-${day.day}`}
-                  className="
-                    relative
-                    bg-[#101010]
-                    border border-gray-800
-                    rounded-[32px]
-                    p-6 md:p-8
-                    shadow-[0_20px_60px_rgba(0,0,0,0.6)]
-                    overflow-hidden
-                  "
-                >
-
-                  {/* Card Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none"></div>
-
-                  {/* Day Header */}
-                  <div className="flex items-center justify-between flex-wrap gap-5 mb-10 relative z-10">
-
-                    <div className="flex items-center gap-5">
-
-                      {/* Day Badge */}
-                      <div className="w-16 h-16 rounded-2xl bg-white text-black flex items-center justify-center text-2xl font-black shadow-lg">
-                        {day.day}
-                      </div>
-
-                      {/* Day Info */}
-                      <div>
-                        <h3 className="text-3xl font-bold text-white">
-                          {day.theme ||
-                            `Day ${day.day}`}
-                        </h3>
-
-                        <p className="text-gray-400 mt-1">
-                          Curated itinerary for your
-                          premium experience
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Activity Count */}
-                    <div className="bg-[#1b1b1b] border border-gray-700 px-5 py-2 rounded-full text-sm text-gray-300 font-medium">
-                      {day.activities.length}{' '}
-                      Activities
-                    </div>
-                  </div>
-
-                  {/* Activities Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 relative z-10">
-
-                    {day.activities.length > 0 ? (
-                      day.activities.map(activity => (
-                        <div
-                          key={activity.id}
-                          className="
-                            bg-[#181818]
-                            border border-gray-800
-                            rounded-[28px]
-                            overflow-hidden
-                            shadow-lg
-                            hover:border-gray-600
-                            hover:shadow-[0_0_40px_rgba(255,255,255,0.08)]
-                            hover:-translate-y-2
-                            transition-all duration-300
-                          "
-                        >
-                          <PlaceCardItem
-                            place={activity}
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <div className="col-span-full bg-[#181818] border border-gray-800 rounded-3xl p-10 text-center">
-
-                        <h4 className="text-xl font-semibold text-white mb-2">
-                          No Activities Planned
-                        </h4>
-
-                        <p className="text-gray-400">
-                          Your itinerary for this day
-                          is currently empty.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+              <span className="text-gray-800 text-sm font-medium">
+                Loading premium destination
+                visuals...
+              </span>
             </div>
           </div>
+        )}
+
+        {/* Day Plans */}
+        <div className="space-y-12">
+
+          {displayPlans.map(day => (
+            <div
+              key={`day-${day.day}`}
+              className="
+                relative
+                bg-white
+                border border-gray-300
+                rounded-[32px]
+                p-6 md:p-8
+                shadow-[0_10px_40px_rgba(0,0,0,0.08)]
+                overflow-hidden
+              "
+            >
+
+              {/* Card Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-black/[0.02] via-transparent to-transparent pointer-events-none"></div>
+
+              {/* Day Header */}
+              <div className="flex items-center justify-between flex-wrap gap-5 mb-10 relative z-10">
+
+                <div className="flex items-center gap-5">
+
+                  {/* Day Badge */}
+                  <div className="w-16 h-16 rounded-2xl bg-black text-white flex items-center justify-center text-2xl font-black shadow-lg">
+                    {day.day}
+                  </div>
+
+                  {/* Day Info */}
+                  <div>
+                    <h3 className="text-3xl font-bold text-black">
+                      {day.theme ||
+                        `Day ${day.day}`}
+                    </h3>
+
+                    <p className="text-gray-700 mt-1">
+                      Curated itinerary for
+                      your premium experience
+                    </p>
+                  </div>
+                </div>
+
+                {/* Activity Count */}
+                <div className="bg-gray-100 border border-gray-300 px-5 py-2 rounded-full text-sm text-gray-800 font-medium">
+                  {day.activities.length}{' '}
+                  Activities
+                </div>
+              </div>
+
+              {/* Activities Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 relative z-10">
+
+                {day.activities.length >
+                0 ? (
+                  day.activities.map(
+                    activity => (
+                      <div
+                        key={activity.id}
+                        className="
+                          bg-white
+                          border border-gray-300
+                          rounded-[28px]
+                          overflow-hidden
+                          shadow-md
+                          hover:border-black
+                          hover:shadow-[0_0_30px_rgba(0,0,0,0.12)]
+                          hover:-translate-y-2
+                          transition-all duration-300
+                        "
+                      >
+                        <PlaceCardItem
+                          place={activity}
+                        />
+                      </div>
+                    )
+                  )
+                ) : (
+                  <div className="col-span-full bg-gray-100 border border-gray-300 rounded-3xl p-10 text-center">
+
+                    <h4 className="text-xl font-semibold text-black mb-2">
+                      No Activities Planned
+                    </h4>
+
+                    <p className="text-gray-700">
+                      Your itinerary for this
+                      day is currently empty.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-      );
-  }
+      </div>
+    </div>
+  );
 }
 
 export default PlacesToVisit;
