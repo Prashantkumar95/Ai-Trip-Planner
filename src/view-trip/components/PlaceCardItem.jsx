@@ -64,7 +64,7 @@ const PlaceCardItem = ({ place }) => {
 
       {/* Place Details */}
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-xl font-bold mb-2 text-gray-800">{place.placeName}</h3>
+        <h3 className="text-xl font-bold mb-2 text-black-800">{place.placeName}</h3>
 
         <div className="flex items-center mb-1">
           <FaClock className="text-gray-500 mr-2" />
@@ -91,7 +91,7 @@ const PlaceCardItem = ({ place }) => {
           <div className="mt-auto pt-2 border-t border-gray-100">
             <div className="flex items-start">
               <FaInfoCircle className="text-gray-500 mr-2 mt-1 flex-shrink-0" />
-              <p className="text-gray-600 text-sm">{place.placeDetails}</p>
+              <p className="text-black-600 text-sm">{place.placeDetails}</p>
             </div>
           </div>
         )}

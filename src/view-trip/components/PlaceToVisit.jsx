@@ -634,7 +634,7 @@ function PlacesToVisit({ tripData = {} }) {
               {day.activities.map((activity, idx) => (
                 <div key={activity.id} className={`p-6 ${idx !== day.activities.length - 1 ? 'border-b border-gray-800' : ''}`}>
                   {/* Place Name - Clearly Visible */}
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-2xl font-bold text-black mb-3">
                     {activity.placeName}
                   </h3>
                   
