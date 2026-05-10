@@ -407,20 +407,7 @@ const ViewTrip = () => {
           </div>
         </section>
 
-        {/* PLACES TO VISIT SECTION - NOW VISIBLE */}
-        <section className="mb-16">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white mb-2">
-              Places To Visit
-            </h2>
-            <p className="text-gray-400">
-              Curated attractions and experiences for your journey
-            </p>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-            <PlacesToVisit tripData={tripData} />
-          </div>
-        </section>
+        
 
         {/* HOTELS SECTION */}
         <section className="mb-16">
