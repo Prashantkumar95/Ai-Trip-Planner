@@ -25,7 +25,7 @@ const Footer = () => {
             </h2>
             <p>
                 <span role="img" aria-label="copyright" style={emojiStyle}>©</span>
-                All rights reserved 2025
+                All rights reserved 2026
             </p>
         </div>
     );
