@@ -115,7 +115,6 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaTicketAlt,
-  FaArrowRight,
 } from 'react-icons/fa';
 
 const GOOGLE_API_KEY =
@@ -132,7 +131,9 @@ const PHOTO_REF_URL = (
     ? `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=1000&key=${GOOGLE_API_KEY}`
     : FALLBACK_IMAGE;
 
-const PlaceCardItem = ({ place }) => {
+function PlaceCardItem({
+  place,
+}) {
   const [imageUrl, setImageUrl] =
     useState(
       place?.placeImageURL &&
@@ -145,6 +146,7 @@ const PlaceCardItem = ({ place }) => {
   const [isLoading, setIsLoading] =
     useState(false);
 
+  // FETCH GOOGLE PLACE IMAGE
   const fetchPlacePhoto =
     useCallback(async () => {
       if (
@@ -166,7 +168,7 @@ const PlaceCardItem = ({ place }) => {
           });
 
         console.log(
-          'Place API Response:',
+          'Google Place Response:',
           response?.data
         );
 
@@ -183,13 +185,13 @@ const PlaceCardItem = ({ place }) => {
         }
       } catch (error) {
         console.error(
-          'Failed to fetch place image:',
+          'Failed to fetch place photo:',
           error
         );
       } finally {
         setIsLoading(false);
       }
-    }, [place?.placeName, imageUrl]);
+    }, [place?.placeName]);
 
   useEffect(() => {
     fetchPlacePhoto();
@@ -198,35 +200,33 @@ const PlaceCardItem = ({ place }) => {
   return (
     <div
       className="
-        group
-        relative
-        bg-white
-        rounded-[32px]
+        bg-[#f8f9fb]
+        rounded-3xl
         overflow-hidden
         border
-        border-gray-200
-        shadow-[0_10px_40px_rgba(0,0,0,0.06)]
-        hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)]
+        border-gray-300
+        shadow-xl
+        hover:shadow-2xl
         hover:-translate-y-2
         transition-all
-        duration-500
+        duration-300
+        min-h-[650px]
         flex
         flex-col
-        h-full
       "
     >
       {/* IMAGE SECTION */}
-      <div className="relative h-[280px] overflow-hidden">
+      <div className="relative h-64 bg-gray-200 overflow-hidden">
 
-        {/* Loader */}
+        {/* LOADER */}
         {isLoading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white">
 
-            <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
           </div>
         )}
 
-        {/* Image */}
+        {/* IMAGE */}
         <img
           src={imageUrl}
           alt={
@@ -239,7 +239,7 @@ const PlaceCardItem = ({ place }) => {
             object-cover
             transition-transform
             duration-700
-            group-hover:scale-110
+            hover:scale-110
           "
           onError={(e) => {
             e.target.src =
@@ -247,10 +247,10 @@ const PlaceCardItem = ({ place }) => {
           }}
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
 
-        {/* Floating Map Button */}
+        {/* MAP BUTTON */}
         {place?.mapsUrl && (
           <a
             href={place.mapsUrl}
@@ -258,43 +258,28 @@ const PlaceCardItem = ({ place }) => {
             rel="noopener noreferrer"
             className="
               absolute
-              top-5
-              right-5
-              w-12
-              h-12
-              rounded-2xl
-              bg-white/90
-              backdrop-blur-md
-              flex
-              items-center
-              justify-center
+              top-4
+              right-4
+              bg-white
+              p-3
+              rounded-full
               shadow-lg
               hover:bg-black
               hover:text-white
               transition-all
               duration-300
-              z-10
             "
           >
             <FaMapMarkerAlt className="text-lg" />
           </a>
         )}
 
-        {/* Place Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+        {/* PLACE NAME */}
+        <div className="absolute bottom-5 left-5 right-5">
 
-          <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-full mb-4 border border-white/20">
-
-            <div className="w-2 h-2 rounded-full bg-green-400"></div>
-
-            <span className="text-white text-sm font-medium">
-              Recommended Destination
-            </span>
-          </div>
-
-          <h2 className="text-3xl font-black text-white leading-tight drop-shadow-lg">
+          <h2 className="text-3xl font-bold text-white drop-shadow-lg">
             {place?.placeName ||
-              'Unknown Place'}
+              'Unknown Destination'}
           </h2>
         </div>
       </div>
@@ -302,21 +287,22 @@ const PlaceCardItem = ({ place }) => {
       {/* CONTENT */}
       <div className="p-6 flex flex-col flex-1">
 
-        {/* Description */}
-        <p className="text-gray-600 leading-relaxed text-[15px] mb-6 line-clamp-3">
+        {/* DESCRIPTION */}
+        <p className="text-gray-700 leading-relaxed text-[15px] mb-6 line-clamp-4">
+
           {place?.placeDetails ||
-            'Explore one of the most beautiful destinations carefully curated for your unforgettable travel experience.'}
+            'Explore this beautiful travel destination and enjoy unforgettable experiences carefully curated for your journey.'}
         </p>
 
-        {/* INFO CARDS */}
+        {/* INFO GRID */}
         <div className="grid grid-cols-2 gap-4 mb-6">
 
-          {/* Best Time */}
-          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+          {/* BEST TIME */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
 
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-2 mb-2">
 
-              <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center">
 
                 <FaClock />
               </div>
@@ -334,48 +320,41 @@ const PlaceCardItem = ({ place }) => {
             </div>
           </div>
 
-          {/* Duration */}
-          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+          {/* PRICE */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
 
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-2 mb-2">
 
-              <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center">
 
                 <FaTicketAlt />
               </div>
 
               <div>
                 <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">
-                  Duration
+                  Ticket Price
                 </p>
 
                 <p className="text-sm font-bold text-black">
-                  {place?.duration ||
-                    '2-3 Hours'}
+                  {place?.ticketPrice ||
+                    'Free'}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Price Section */}
-        <div className="flex items-center justify-between bg-black rounded-2xl px-5 py-4 mb-6">
+        {/* DURATION */}
+        <div className="bg-black rounded-2xl p-5 mb-6 text-white shadow-lg">
 
-          <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wide">
-              Ticket Price
-            </p>
+          <p className="text-gray-400 text-xs uppercase tracking-wide mb-1">
+            Estimated Duration
+          </p>
 
-            <h3 className="text-white text-xl font-bold">
-              {place?.ticketPrice ||
-                'Free'}
-            </h3>
-          </div>
-
-          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-
-            <FaTicketAlt className="text-white text-lg" />
-          </div>
+          <h3 className="text-2xl font-bold">
+            {place?.duration ||
+              '2-3 Hours'}
+          </h3>
         </div>
 
         {/* BUTTON */}
@@ -386,17 +365,13 @@ const PlaceCardItem = ({ place }) => {
             rel="noopener noreferrer"
             className="
               mt-auto
-              group/button
               w-full
               bg-black
               text-white
               py-4
               rounded-2xl
               font-semibold
-              flex
-              items-center
-              justify-center
-              gap-3
+              text-center
               hover:bg-gray-900
               transition-all
               duration-300
@@ -404,34 +379,11 @@ const PlaceCardItem = ({ place }) => {
             "
           >
             Explore Destination
-
-            <FaArrowRight
-              className="
-                transition-transform
-                duration-300
-                group-hover/button:translate-x-1
-              "
-            />
           </a>
         )}
       </div>
-
-      {/* Hover Border Glow */}
-      <div
-        className="
-          absolute
-          inset-0
-          rounded-[32px]
-          border
-          border-transparent
-          group-hover:border-black/10
-          pointer-events-none
-          transition-all
-          duration-500
-        "
-      ></div>
     </div>
   );
-};
+}
 
 export default PlaceCardItem;
