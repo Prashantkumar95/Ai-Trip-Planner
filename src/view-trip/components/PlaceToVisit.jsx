@@ -416,7 +416,7 @@ function PlacesToVisit({ tripData = {} }) {
   if (isLoading) {
     return (
       <div style={{ backgroundColor: '#000000', padding: '60px 0', textAlign: 'center' }}>
-        <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '3px solid #1a1a1a', borderTop: '3px solid #3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '3px solid #1a1a1a', borderTop: '3px solid #f59e0b', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         <p style={{ color: '#6b7280', marginTop: '16px' }}>Loading itinerary...</p>
         <style>{`
           @keyframes spin {
@@ -443,32 +443,32 @@ function PlacesToVisit({ tripData = {} }) {
         {processedData.map((day) => (
           <div key={day.day} style={{ marginBottom: '40px' }}>
             
-            {/* Day Header - Dark with Blue Glow */}
+            {/* Day Header - Gold Theme */}
             <div style={{
               background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)',
-              borderBottom: '2px solid #1a1a1a',
+              borderBottom: `2px solid #f59e0b`,
               padding: '20px 24px',
               borderRadius: '16px 16px 0 0'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div style={{
-                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                   borderRadius: '12px',
                   width: '56px',
                   height: '56px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 4px 15px rgba(37,99,235,0.3)'
+                  boxShadow: '0 4px 15px rgba(245,158,11,0.3)'
                 }}>
-                  <span style={{ color: '#ffffff', fontWeight: 'bold', fontSize: '24px' }}>{day.day}</span>
+                  <span style={{ color: '#000000', fontWeight: 'bold', fontSize: '24px' }}>{day.day}</span>
                 </div>
                 <div>
                   <h2 style={{ color: '#ffffff', fontSize: '26px', fontWeight: 'bold', margin: 0 }}>
                     {day.theme}
                   </h2>
-                  <p style={{ color: '#6b7280', fontSize: '13px', marginTop: '4px' }}>
-                    {day.activities.length} {day.activities.length === 1 ? 'Activity' : 'Activities'}
+                  <p style={{ color: '#f59e0b', fontSize: '13px', marginTop: '4px' }}>
+                    ⭐ {day.activities.length} {day.activities.length === 1 ? 'Experience' : 'Experiences'}
                   </p>
                 </div>
               </div>

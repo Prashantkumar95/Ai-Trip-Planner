@@ -228,7 +228,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { GetPlaceDetails } from '@/service/GlobalApi';
-import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf, FaStar } from 'react-icons/fa';
 
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACE_API_KEY || '';
 
@@ -267,14 +267,25 @@ const PlaceCardItem = ({ place }) => {
   return (
     <div 
       style={{
-        backgroundColor: '#000000',
+        backgroundColor: '#0a0a0a',
         borderRadius: '16px',
         overflow: 'hidden',
         boxShadow: '0 20px 35px -10px rgba(0,0,0,0.5)',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        border: '1px solid #1a1a1a'
+        border: '1px solid #1f1f1f',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.boxShadow = '0 25px 40px -12px rgba(0,0,0,0.6)';
+        e.currentTarget.style.borderColor = '#f59e0b';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 20px 35px -10px rgba(0,0,0,0.5)';
+        e.currentTarget.style.borderColor = '#1f1f1f';
       }}
     >
       {/* Image Section */}
@@ -295,10 +306,10 @@ const PlaceCardItem = ({ place }) => {
           left: 0,
           right: 0,
           height: '80px',
-          background: 'linear-gradient(to top, #000000, transparent)'
+          background: 'linear-gradient(to top, #0a0a0a, transparent)'
         }}></div>
         
-        {/* Duration Badge */}
+        {/* Duration Badge - Gold Theme */}
         {place.duration && (
           <div style={{
             position: 'absolute',
@@ -311,10 +322,10 @@ const PlaceCardItem = ({ place }) => {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            border: '1px solid #333'
+            border: '1px solid #f59e0b'
           }}>
-            <FaHourglassHalf style={{ color: '#ffffff', fontSize: '12px' }} />
-            <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: '500' }}>{place.duration}</span>
+            <FaHourglassHalf style={{ color: '#f59e0b', fontSize: '12px' }} />
+            <span style={{ color: '#f59e0b', fontSize: '12px', fontWeight: '500' }}>{place.duration}</span>
           </div>
         )}
         
@@ -332,57 +343,67 @@ const PlaceCardItem = ({ place }) => {
               backdropFilter: 'blur(8px)',
               padding: '10px',
               borderRadius: '50%',
-              border: '1px solid #333',
+              border: '1px solid #1f1f1f',
               cursor: 'pointer',
-              textDecoration: 'none'
+              textDecoration: 'none',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#f59e0b';
+              e.currentTarget.style.backgroundColor = '#f59e0b20';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#1f1f1f';
+              e.currentTarget.style.backgroundColor = '#000000cc';
             }}
           >
-            <FaMapMarkerAlt style={{ color: '#3b82f6', fontSize: '18px' }} />
+            <FaMapMarkerAlt style={{ color: '#f59e0b', fontSize: '18px' }} />
           </a>
         )}
       </div>
 
-      {/* Content Section - PURE BLACK with BRIGHT WHITE TEXT */}
-      <div style={{ padding: '20px', flex: 1, backgroundColor: '#000000' }}>
+      {/* Content Section */}
+      <div style={{ padding: '20px', flex: 1, backgroundColor: '#0a0a0a' }}>
         
-        {/* PLACE NAME - BIG BRIGHT WHITE */}
+        {/* PLACE NAME - GOLD COLOR */}
         <h3 style={{ 
           fontSize: '22px', 
           fontWeight: 'bold', 
           marginBottom: '14px', 
-          color: '#ffffff',
-          lineHeight: '1.3'
+          color: '#f59e0b',
+          lineHeight: '1.3',
+          textShadow: '0 0 20px rgba(245,158,11,0.2)'
         }}>
           {place.placeName || 'Unnamed Place'}
         </h3>
 
-        {/* Best Time */}
+        {/* Best Time - GOLD HIGHLIGHTED */}
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '12px' }}>
-          <FaClock style={{ color: '#3b82f6', marginRight: '10px', marginTop: '2px', fontSize: '14px' }} />
+          <FaClock style={{ color: '#f59e0b', marginRight: '10px', marginTop: '2px', fontSize: '14px' }} />
           <div>
             <span style={{ color: '#ffffff', fontSize: '13px', fontWeight: 'bold' }}>Best Time: </span>
-            <span style={{ color: '#d1d5db', fontSize: '13px' }}>{place.bestVisitTime || 'Anytime'}</span>
+            <span style={{ color: '#fbbf24', fontSize: '13px', fontWeight: '500' }}>{place.bestVisitTime || 'Anytime'}</span>
           </div>
         </div>
 
         {/* Price */}
         {place.ticketPrice && (
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '14px' }}>
-            <FaTicketAlt style={{ color: '#3b82f6', marginRight: '10px', fontSize: '14px' }} />
+            <FaTicketAlt style={{ color: '#f59e0b', marginRight: '10px', fontSize: '14px' }} />
             <span style={{ color: '#ffffff', fontSize: '13px', fontWeight: 'bold' }}>Price: </span>
-            <span style={{ color: '#d1d5db', fontSize: '13px', marginLeft: '4px' }}>{place.ticketPrice}</span>
+            <span style={{ color: '#9ca3af', fontSize: '13px', marginLeft: '4px' }}>{place.ticketPrice}</span>
           </div>
         )}
 
-        {/* Description - NOW FULLY VISIBLE */}
+        {/* Description */}
         {place.placeDetails && (
           <div style={{ 
             marginTop: '16px', 
             paddingTop: '16px', 
-            borderTop: '1px solid #1a1a1a'
+            borderTop: '1px solid #1f1f1f'
           }}>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-              <FaInfoCircle style={{ color: '#3b82f6', marginRight: '10px', marginTop: '2px', fontSize: '13px', flexShrink: 0 }} />
+              <FaInfoCircle style={{ color: '#f59e0b', marginRight: '10px', marginTop: '2px', fontSize: '13px', flexShrink: 0 }} />
               <p style={{ 
                 color: '#9ca3af', 
                 fontSize: '13px', 
