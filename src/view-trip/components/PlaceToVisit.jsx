@@ -655,7 +655,7 @@ function PlacesToVisit({ tripData = {} }) {
                   
                   {/* Description */}
                   {activity.description && (
-                    <p className="text-gray-300 mb-4 leading-relaxed">
+                    <p className="text-black-300 mb-4 leading-relaxed">
                       {activity.description}
                     </p>
                   )}
