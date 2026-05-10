@@ -379,9 +379,6 @@ function PlacesToVisit({ tripData = {} }) {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    console.log('Trip Data:', tripData);
-    
-    // Extract itinerary from data structure
     let itinerary = [];
     
     if (tripData?.itinerary && Array.isArray(tripData.itinerary)) {
@@ -392,14 +389,12 @@ function PlacesToVisit({ tripData = {} }) {
       itinerary = tripData;
     }
     
-    // Process each day
     const days = itinerary.map((day, dayIndex) => {
       let activities = day.activities || day.plan || day.places || [];
       
       const processedActivities = activities.map((activity, actIndex) => ({
         id: `act-${dayIndex}-${actIndex}`,
         placeName: activity.placeName || activity.name || `Activity ${actIndex + 1}`,
-        timeRange: activity.timeRange || activity.time || '',
         duration: activity.duration || '',
         bestVisitTime: activity.bestVisitTime || activity.bestTime || '',
         placeDetails: activity.placeDetails || activity.description || '',
@@ -420,64 +415,92 @@ function PlacesToVisit({ tripData = {} }) {
 
   if (isLoading) {
     return (
-      <div className="bg-black py-20 text-center">
-        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
-        <p className="text-gray-400">Loading your itinerary...</p>
+      <div style={{ backgroundColor: '#000000', padding: '60px 0', textAlign: 'center' }}>
+        <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '3px solid #1a1a1a', borderTop: '3px solid #3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <p style={{ color: '#6b7280', marginTop: '16px' }}>Loading itinerary...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
 
   if (processedData.length === 0) {
     return (
-      <div className="bg-black py-20 text-center">
-        <p className="text-gray-500">No itinerary data available</p>
+      <div style={{ backgroundColor: '#000000', padding: '60px 0', textAlign: 'center' }}>
+        <p style={{ color: '#6b7280' }}>No itinerary data available</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-black py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div style={{ backgroundColor: '#000000', padding: '32px 0' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px' }}>
         
-        {/* Days */}
-        <div className="space-y-8">
-          {processedData.map((day) => (
-            <div key={day.day} className="relative">
-              
-              {/* Day Header - Dark with Blue Accent */}
-              <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-t-2xl p-5 border-b border-gray-800">
-                <div className="flex items-center gap-4">
-                  <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl w-14 h-14 flex items-center justify-center shadow-xl">
-                    <span className="text-white font-bold text-2xl">{day.day}</span>
-                  </div>
-                  <div>
-                    <h2 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
-                      {day.theme}
-                    </h2>
-                    <p className="text-gray-500 text-sm mt-1">
-                      {day.activities.length} {day.activities.length === 1 ? 'Experience' : 'Experiences'}
-                    </p>
-                  </div>
+        {processedData.map((day) => (
+          <div key={day.day} style={{ marginBottom: '40px' }}>
+            
+            {/* Day Header - Dark with Blue Glow */}
+            <div style={{
+              background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)',
+              borderBottom: '2px solid #1a1a1a',
+              padding: '20px 24px',
+              borderRadius: '16px 16px 0 0'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  borderRadius: '12px',
+                  width: '56px',
+                  height: '56px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 15px rgba(37,99,235,0.3)'
+                }}>
+                  <span style={{ color: '#ffffff', fontWeight: 'bold', fontSize: '24px' }}>{day.day}</span>
+                </div>
+                <div>
+                  <h2 style={{ color: '#ffffff', fontSize: '26px', fontWeight: 'bold', margin: 0 }}>
+                    {day.theme}
+                  </h2>
+                  <p style={{ color: '#6b7280', fontSize: '13px', marginTop: '4px' }}>
+                    {day.activities.length} {day.activities.length === 1 ? 'Activity' : 'Activities'}
+                  </p>
                 </div>
               </div>
-
-              {/* Activities Grid */}
-              <div className="bg-black rounded-b-2xl p-6 border-x border-b border-gray-800">
-                {day.activities.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {day.activities.map((activity) => (
-                      <PlaceCardItem key={activity.id} place={activity} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16">
-                    <p className="text-gray-600">No activities planned for this day</p>
-                  </div>
-                )}
-              </div>
             </div>
-          ))}
-        </div>
+
+            {/* Activities Grid */}
+            <div style={{
+              backgroundColor: '#000000',
+              padding: '24px',
+              borderRadius: '0 0 16px 16px',
+              borderLeft: '1px solid #1a1a1a',
+              borderRight: '1px solid #1a1a1a',
+              borderBottom: '1px solid #1a1a1a'
+            }}>
+              {day.activities.length > 0 ? (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                  gap: '24px'
+                }}>
+                  {day.activities.map((activity) => (
+                    <PlaceCardItem key={activity.id} place={activity} />
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                  <p style={{ color: '#6b7280' }}>No activities planned for this day</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

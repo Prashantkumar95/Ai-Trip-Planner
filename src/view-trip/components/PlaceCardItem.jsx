@@ -228,7 +228,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { GetPlaceDetails } from '@/service/GlobalApi';
-import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf, FaStar } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaClock, FaTicketAlt, FaInfoCircle, FaHourglassHalf } from 'react-icons/fa';
 
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACE_API_KEY || '';
 
@@ -265,21 +265,58 @@ const PlaceCardItem = ({ place }) => {
   }, [fetchPlacePhoto]);
 
   return (
-    <div className="bg-black rounded-xl overflow-hidden shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 h-full flex flex-col border border-gray-800 hover:border-gray-700">
-      
+    <div 
+      style={{
+        backgroundColor: '#000000',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        boxShadow: '0 20px 35px -10px rgba(0,0,0,0.5)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid #1a1a1a'
+      }}
+    >
       {/* Image Section */}
-      <div className="relative h-52 overflow-hidden bg-black">
+      <div style={{ position: 'relative', height: '220px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
         <img
           src={imageUrl}
           alt={place.placeName || 'Place'}
-          className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onError={(e) => {
             e.target.src = '/placeholder-location.jpg';
           }}
         />
         
         {/* Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '80px',
+          background: 'linear-gradient(to top, #000000, transparent)'
+        }}></div>
+        
+        {/* Duration Badge */}
+        {place.duration && (
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '12px',
+            backgroundColor: '#000000cc',
+            backdropFilter: 'blur(8px)',
+            padding: '6px 12px',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            border: '1px solid #333'
+          }}>
+            <FaHourglassHalf style={{ color: '#ffffff', fontSize: '12px' }} />
+            <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: '500' }}>{place.duration}</span>
+          </div>
+        )}
         
         {/* Map Button */}
         {place.mapsUrl && (
@@ -287,51 +324,72 @@ const PlaceCardItem = ({ place }) => {
             href={place.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute top-3 right-3 bg-black/80 backdrop-blur-sm p-2.5 rounded-full shadow-lg hover:bg-gray-900 transition-all duration-300 border border-gray-700 hover:border-gray-600"
+            style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              backgroundColor: '#000000cc',
+              backdropFilter: 'blur(8px)',
+              padding: '10px',
+              borderRadius: '50%',
+              border: '1px solid #333',
+              cursor: 'pointer',
+              textDecoration: 'none'
+            }}
           >
-            <FaMapMarkerAlt className="text-blue-400 text-lg" />
+            <FaMapMarkerAlt style={{ color: '#3b82f6', fontSize: '18px' }} />
           </a>
-        )}
-        
-        {/* Duration Badge */}
-        {place.duration && (
-          <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 border border-gray-700">
-            <FaHourglassHalf className="text-gray-300 text-xs" />
-            <span className="text-gray-200 text-xs font-medium">{place.duration}</span>
-          </div>
         )}
       </div>
 
-      {/* Content Section - Ultra Dark with Bright Text */}
-      <div className="p-5 flex-1 flex flex-col bg-black">
+      {/* Content Section - PURE BLACK with BRIGHT WHITE TEXT */}
+      <div style={{ padding: '20px', flex: 1, backgroundColor: '#000000' }}>
         
-        {/* Place Name - Bright White */}
-        <h3 className="text-xl font-bold mb-3 text-white leading-tight hover:text-blue-400 transition-colors">
+        {/* PLACE NAME - BIG BRIGHT WHITE */}
+        <h3 style={{ 
+          fontSize: '22px', 
+          fontWeight: 'bold', 
+          marginBottom: '14px', 
+          color: '#ffffff',
+          lineHeight: '1.3'
+        }}>
           {place.placeName || 'Unnamed Place'}
         </h3>
 
         {/* Best Time */}
-        <div className="flex items-start mb-2.5">
-          <FaClock className="text-gray-500 mr-2.5 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <span className="text-gray-200 text-sm font-semibold">Best Time: </span>
-            <span className="text-gray-400 text-sm">{place.bestVisitTime || 'Anytime'}</span>
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '12px' }}>
+          <FaClock style={{ color: '#3b82f6', marginRight: '10px', marginTop: '2px', fontSize: '14px' }} />
+          <div>
+            <span style={{ color: '#ffffff', fontSize: '13px', fontWeight: 'bold' }}>Best Time: </span>
+            <span style={{ color: '#d1d5db', fontSize: '13px' }}>{place.bestVisitTime || 'Anytime'}</span>
           </div>
         </div>
 
         {/* Price */}
-        <div className="flex items-center mb-3">
-          <FaTicketAlt className="text-gray-500 mr-2.5 flex-shrink-0" />
-          <span className="text-gray-200 text-sm font-semibold">Price: </span>
-          <span className="text-gray-400 text-sm ml-1">{place.ticketPrice || 'Free'}</span>
-        </div>
+        {place.ticketPrice && (
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '14px' }}>
+            <FaTicketAlt style={{ color: '#3b82f6', marginRight: '10px', fontSize: '14px' }} />
+            <span style={{ color: '#ffffff', fontSize: '13px', fontWeight: 'bold' }}>Price: </span>
+            <span style={{ color: '#d1d5db', fontSize: '13px', marginLeft: '4px' }}>{place.ticketPrice}</span>
+          </div>
+        )}
 
-        {/* Description */}
+        {/* Description - NOW FULLY VISIBLE */}
         {place.placeDetails && (
-          <div className="mt-2 pt-3 border-t border-gray-800">
-            <div className="flex items-start">
-              <FaInfoCircle className="text-gray-600 mr-2.5 mt-0.5 flex-shrink-0 text-sm" />
-              <p className="text-gray-400 text-sm leading-relaxed">
+          <div style={{ 
+            marginTop: '16px', 
+            paddingTop: '16px', 
+            borderTop: '1px solid #1a1a1a'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+              <FaInfoCircle style={{ color: '#3b82f6', marginRight: '10px', marginTop: '2px', fontSize: '13px', flexShrink: 0 }} />
+              <p style={{ 
+                color: '#9ca3af', 
+                fontSize: '13px', 
+                lineHeight: '1.6', 
+                margin: 0,
+                letterSpacing: '0.2px'
+              }}>
                 {place.placeDetails}
               </p>
             </div>
